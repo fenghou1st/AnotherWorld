@@ -1,0 +1,41 @@
+// http://eslint.org/docs/user-guide/configuring
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+module.exports = {
+  root: true,
+
+  extends: ['eslint:recommended', 'google', 'plugin:react/recommended'],
+
+  parser: 'babel-eslint',
+
+  parserOptions: {
+    ecmaVersion: 8,
+    ecmaFeatures: {
+      impliedStrict: true,
+      jsx: true,
+    },
+    sourceType: 'module',
+  },
+
+  env: {
+    es6: true,
+    node: true,
+    browser: true,
+    commonjs: true,
+    amd: true,
+    jquery: true,
+  },
+
+  plugins: ['react'],
+
+  globals: {
+    __DEV__: false,
+    __PROD__: false,
+  },
+
+  rules: {
+    'no-debugger': IS_PRODUCTION ? 'error' : 'off',
+    'no-console': IS_PRODUCTION ? 'error' : 'off',
+  },
+};
