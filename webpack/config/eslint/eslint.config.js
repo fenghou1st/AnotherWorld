@@ -35,6 +35,7 @@ module.exports = {
   },
 
   rules: {
+    'strict': 'warn',
     'no-debugger': IS_PRODUCTION ? 'error' : 'off',
     'no-console': IS_PRODUCTION ? 'error' : 'off',
   },

@@ -19,7 +19,8 @@ module.exports = {
           loader: 'eslint-loader',
           options: {
             fix: true,
-            cache: true,
+            // If enabled, will cause ignoring errors when changing NODE_ENV
+            // cache: true,
             formatter: eslintFormatter,
             failOnError: true,
             configFile: path.join(dirs.config, 'eslint/eslint.config.js'),
