@@ -1,11 +1,12 @@
+const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const dirs = require('./directories.config.js');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const plugins = [
-
-  new ExtractTextPlugin('[name].css'),
 
   new webpack.DefinePlugin({
     __DEV__: JSON.stringify(!IS_PRODUCTION),
@@ -16,6 +17,12 @@ const plugins = [
 
   new webpack.EnvironmentPlugin({
     NODE_ENV: IS_PRODUCTION ? 'production' : 'development',
+  }),
+
+  new ExtractTextPlugin('[name].css'),
+
+  new HtmlWebpackPlugin({
+    template: path.join(dirs.sourceRoot, 'views/index.html'),
   }),
 ];
 

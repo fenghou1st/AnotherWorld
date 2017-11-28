@@ -1,7 +1,5 @@
 const dirs = require('./config/directories.config.js');
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-
 module.exports = {
   context: dirs.projectRoot,
 
@@ -17,7 +15,5 @@ module.exports = {
 
   externals: require('./config/externals.config.js'),
 
-  // can only set to 'source-map' or 'cheap-module-source-map',
-  // otherwise css source-map will not be generated
-  devtool: IS_PRODUCTION ? false : 'source-map',
+  devtool: require('./config/devtool.config.js'),
 };
