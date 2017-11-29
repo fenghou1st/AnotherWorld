@@ -135,13 +135,6 @@ module.exports = {
     },
     {
       resource: {
-        test: /\.json$/,
-        include: dirs.sourceRoot,
-      },
-      use: [{loader: 'json-loader'}],
-    },
-    {
-      resource: {
         test: /\.(yaml|yml)$/,
         include: dirs.sourceRoot,
       },
@@ -159,7 +152,7 @@ module.exports = {
     },
     {
       resource: {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(gif|png|jpe?g|svg)$/,
       },
       use: [
         {
@@ -169,11 +162,33 @@ module.exports = {
             name: './images/[hash].[ext]',
           },
         },
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            mozjpeg: {
+              progressive: true,
+              quality: 65,
+            },
+            optipng: {
+              enabled: false,
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4,
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+            webp: {
+              quality: 75,
+            },
+          },
+        },
       ],
     },
     {
       resource: {
-        test: /\.(svg|ttf|otf|woff|woff2|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.(woff|woff2|eot|ttf|otf)(\?v=\d+\.\d+\.\d+)?$/,
       },
       use: [
         {

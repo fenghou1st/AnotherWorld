@@ -22,7 +22,7 @@ const plugins = [
   new ExtractTextPlugin('[name].css'),
 
   new HtmlWebpackPlugin({
-    template: path.join(dirs.sourceRoot, 'views/index.html'),
+    template: path.join(dirs.sourceRoot, 'base/views/index.html'),
   }),
 ];
 
