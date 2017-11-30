@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const dirs = require('./directories.config.js');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
@@ -23,6 +24,11 @@ const plugins = [
 
   new HtmlWebpackPlugin({
     template: path.join(dirs.sourceRoot, 'base/views/index.html'),
+  }),
+
+  new CleanWebpackPlugin(['dist'], {
+    root: dirs.projectRoot,
+    exclude: ['site.webmanifest', 'icon.png', 'favicon.ico', 'robots.txt'],
   }),
 ];
 

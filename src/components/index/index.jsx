@@ -3,8 +3,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import './index.scss';
-import testImage from './test.png';
-import testJson from './test.json';
+import Game from 'src/components/game/game.jsx';
 
 const language = 'en';
 const transData = require(`./translations.${language}.yml`);
@@ -13,30 +12,10 @@ const transData = require(`./translations.${language}.yml`);
 
 // Classes /////////////////////////////////////////////////////////////////////
 
-/**
- * An example react component
- */
-class Hello extends Component {
-  /**
-   * @return {*}
-   */
-  render() {
-    return (
-        <div>
-          <div>{ transData.content.desc }</div>
-
-          <img src={ testImage } alt="Test Image" />
-
-          <pre>{ JSON.stringify(testJson, null, 2) }</pre>
-        </div>
-    );
-  }
-}
-
 // Functions ///////////////////////////////////////////////////////////////////
 
 // Initializations /////////////////////////////////////////////////////////////
 
 document.title = transData.title;
 
-render(<Hello />, document.getElementById('app'));
+render(<Game />, document.getElementById('app'));
