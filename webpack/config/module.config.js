@@ -152,7 +152,21 @@ module.exports = {
     },
     {
       resource: {
+        test: /textures\/[^/]+$/,
+      },
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            name: './textures/[hash].[ext]',
+          },
+        },
+      ],
+    },
+    {
+      resource: {
         test: /\.(gif|png|jpe?g|svg)$/,
+        exclude: /textures\/[^/]+$/,
       },
       use: [
         {

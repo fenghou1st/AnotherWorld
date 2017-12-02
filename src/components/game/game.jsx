@@ -1,8 +1,18 @@
 // Requirements ////////////////////////////////////////////////////////////////
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import * as THREE from 'three';
+import Stats from 'vendor/stats.js';
 
-import './game.scss';
+import styles from './game.scss';
+import PresentCharacter from './present_character';
+
+import characterPresentations from './data/character_presentations.json';
+import characters from './data/characters.json';
+import systemImages from './data/system_images.json';
+import terrains from './data/terrains.json';
+import texCharacters from './textures/characters.png';
+import texSystem from './textures/system.png';
+import texTiles0 from './textures/tiles0.png';
 
 // Definitions /////////////////////////////////////////////////////////////////
 
@@ -13,273 +23,534 @@ import './game.scss';
  */
 export default class Game extends Component {
   /**
+   * Initialize data and events
    * @param {?Object} props
    */
   constructor(props) {
     super(props);
 
-    this.canvas = null;
-    this.gl = null;
+    this.root = null;
+    this.stats = null;
+    this.width = null;
+    this.height = null;
 
-    this.cubeVerticesBuffer = null;
-    this.cubeVerticesTextureCoordBuffer = null;
-    this.cubeVerticesIndexBuffer = null;
-    this.cubeRotation = 0.0;
-    this.lastTime = 0;
+    this.camera = null;
+    this.scene = null;
+    this.renderer = null;
+    this.geometry = null;
+    this.material = null;
 
-    this.cubeImage = null;
-    this.cubeTexture = null;
+    this.cursor = null;
+    this.cursorTile = null;
 
-    this.mvMatrixStack = [];
-    this.mvMatrix = null;
-    this.shaderProgram = null;
-    this.vertexPositionAttribute = null;
-    this.vertexNormalAttribute = null;
-    this.textureCoordAttribute = null;
-    this.perspectiveMatrix = null;
+    this.terrainId = 16;
+    this.tileRows = terrains[this.terrainId].rows;
+    this.tileCols = terrains[this.terrainId].cols;
+    this.tileImageWidth = 16;
+    this.tileImageHeight = 16;
+    this.tileWidth = 128;
+    this.tileHeight = 128;
+    this.mapXMin = 0;
+    this.mapXMax = this.tileCols * this.tileWidth;
+    this.mapZMin = 0;
+    this.mapZMax = this.tileRows * this.tileHeight;
 
-
+    this.presentChars = [];
+    this.presentCharMeshes = [];
 
     this.initData();
 
     this.animationFrame = null;
-    this.initialized = false;
+    this.initializeList = {
+      onLoadSystemImages: false,
+      onLoadTiles: false,
+      onLoadCharacters: false,
+    };
+    this.mouseX = null;
+    this.mouseY = null;
+    this.currTime = null; // unit: ms
+    this.deltaTime = null; // unit: ms
     this.initEvents();
 
-    this.initCanvas = this.initCanvas.bind(this);
+    //
+    this.initElements = this.initElements.bind(this);
+    this.animate = this.animate.bind(this);
   }
 
   /**
-   * @param {Object} canvas
+   * Initialize DOM elements
+   * @param {Object} root - root element
    */
-  initCanvas(canvas) {
-    this.canvas = canvas;
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
-  }
+  initElements(root) {
+    this.root = root;
 
-  /**
-   * Initialize WebGL
-   */
-  initWebGL() {
-    try {
-      this.gl = this.canvas.getContext('webgl')
-          || this.canvas.getContext('experimental-webgl');
-    } catch (e) {
-      console.log(e);
-    }
+    this.stats = new Stats();
+    this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+    this.root.appendChild(this.stats.dom);
 
-    if (!this.gl) {
-      throw new Error('Unable to initialize WebGL. ' +
-          'Your browser may not support it.');
-    }
-
-    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    this.gl.clearDepth(1.0);
-    this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.depthFunc(this.gl.LEQUAL);
-
-    console.log('viewport: ' + this.gl.getParameter(this.gl.VIEWPORT));
-
-    this.initShaders();
-
-    this.initBuffers();
-
-    this.initTextures();
-  }
-
-  /**
-   * Initialize shaders
-   */
-  initShaders() {
-    const fragmentShader = getShader(this.gl, 'shader-fs');
-    const vertexShader = getShader(this.gl, 'shader-vs');
-
-    this.shaderProgram = this.gl.createProgram();
-    this.gl.attachShader(this.shaderProgram, vertexShader);
-    this.gl.attachShader(this.shaderProgram, fragmentShader);
-    this.gl.linkProgram(this.shaderProgram);
-
-    if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)) {
-      throw new Error('Unable to initialize the shader program.');
-    }
-
-    this.gl.useProgram(this.shaderProgram);
-
-    this.vertexPositionAttribute =
-        this.gl.getAttribLocation(this.shaderProgram, 'aVertexPosition');
-    this.gl.enableVertexAttribArray(this.vertexPositionAttribute);
-
-    this.textureCoordAttribute =
-        this.gl.getAttribLocation(this.shaderProgram, 'aTextureCoord');
-    this.gl.enableVertexAttribArray(this.textureCoordAttribute);
-
-    this.vertexNormalAttribute =
-        this.gl.getAttribLocation(this.shaderProgram, 'aVertexNormal');
-    this.gl.enableVertexAttribArray(this.vertexNormalAttribute);
-  }
-
-  /**
-   * Initialize buffers
-   */
-  initBuffers() {
-    const vertices = [
-      // Front face
-      -1.0, -1.0, 1.0,
-      1.0, -1.0, 1.0,
-      1.0, 1.0, 1.0,
-      -1.0, 1.0, 1.0,
-
-      // Back face
-      -1.0, -1.0, -1.0,
-      -1.0, 1.0, -1.0,
-      1.0, 1.0, -1.0,
-      1.0, -1.0, -1.0,
-
-      // Top face
-      -1.0, 1.0, -1.0,
-      -1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0,
-      1.0, 1.0, -1.0,
-
-      // Bottom face
-      -1.0, -1.0, -1.0,
-      1.0, -1.0, -1.0,
-      1.0, -1.0, 1.0,
-      -1.0, -1.0, 1.0,
-
-      // Right face
-      1.0, -1.0, -1.0,
-      1.0, 1.0, -1.0,
-      1.0, 1.0, 1.0,
-      1.0, -1.0, 1.0,
-
-      // Left face
-      -1.0, -1.0, -1.0,
-      -1.0, -1.0, 1.0,
-      -1.0, 1.0, 1.0,
-      -1.0, 1.0, -1.0,
-    ];
-
-    this.cubeVerticesBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices),
-        this.gl.STATIC_DRAW);
+    this.width = this.root.clientWidth;
+    this.height = this.root.clientHeight;
 
     //
-    const vertexNormals = [
-      // Front
-      0.0, 0.0, 1.0,
-      0.0, 0.0, 1.0,
-      0.0, 0.0, 1.0,
-      0.0, 0.0, 1.0,
+    this.renderer = new THREE.WebGLRenderer({antialias: true});
+    this.renderer.setClearColor(this.scene.fog.color);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(this.width, this.height);
+    this.renderer.autoClear = false;
 
-      // Back
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-
-      // Top
-      0.0, 1.0, 0.0,
-      0.0, 1.0, 0.0,
-      0.0, 1.0, 0.0,
-      0.0, 1.0, 0.0,
-
-      // Bottom
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-
-      // Right
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-
-      // Left
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-    ];
-
-    this.cubeVerticesNormalBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesNormalBuffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
-        this.gl.STATIC_DRAW);
-
-    //
-    const textureCoordinates = [
-      // Front
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-      // Back
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-      // Top
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-      // Bottom
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-      // Right
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-      // Left
-      0.0, 0.0,
-      1.0, 0.0,
-      1.0, 1.0,
-      0.0, 1.0,
-    ];
-
-    this.cubeVerticesTextureCoordBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER,
-        this.cubeVerticesTextureCoordBuffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER,
-        new Float32Array(textureCoordinates), this.gl.STATIC_DRAW);
-
-    //
-    const cubeVertexIndices = [
-      0, 1, 2, 0, 2, 3, // front
-      4, 5, 6, 4, 6, 7, // back
-      8, 9, 10, 8, 10, 11, // top
-      12, 13, 14, 12, 14, 15, // bottom
-      16, 17, 18, 16, 18, 19, // right
-      20, 21, 22, 20, 22, 23, // left
-    ];
-
-    this.cubeVerticesIndexBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER,
-        this.cubeVerticesIndexBuffer);
-    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(cubeVertexIndices), this.gl.STATIC_DRAW);
+    this.root.appendChild(this.renderer.domElement);
   }
 
   /**
-   * Initialize textures
+   * Initialize data
    */
-  initTextures() {
-    this.cubeTexture = this.gl.createTexture();
-    this.cubeImage = new Image();
+  initData() {
+    this.loadPresentCharacters();
 
-    const self = this;
-    this.cubeImage.onload = function() {
-      self.handleTextureLoaded(self.cubeImage, self.cubeTexture);
-    };
+    //
+    if (this.presentChars.length > 0) {
+      this.cursor = new THREE.Vector3(
+          (this.presentChars[0].location.x + 0.5) * this.tileWidth,
+          0,
+          (this.presentChars[0].location.y + 0.5) * this.tileHeight);
+    } else {
+      this.cursor = new THREE.Vector3(
+          (Math.floor(this.tileRows / 2) + 0.5) * this.tileWidth,
+          0,
+          (Math.floor(this.tileCols / 2) + 0.5) * this.tileHeight);
+    }
 
-    this.cubeImage.src = 'images/bricks.png';
+    this.camera = new THREE.PerspectiveCamera(
+        75, this.width / this.height, 1, 2000);
+    this.camera.position.x = this.cursor.x;
+    this.camera.position.y = 500;
+    this.camera.position.z = this.cursor.z + 250;
+
+    //
+    this.scene = new THREE.Scene();
+
+    this.scene.fog = new THREE.Fog(0xF2F7FF, 1, 2000);
+
+    this.scene.add(new THREE.AmbientLight(0x808080));
+
+    const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+    light.position.set(1, 1, 1);
+    this.scene.add(light);
+
+    //
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.load(texSystem,
+        (texture) => this.onLoadSystemImages(texture));
+    textureLoader.load(texTiles0,
+        (texture) => this.onLoadTiles(texture));
+    textureLoader.load(texCharacters,
+        (texture) => this.onLoadCharacters(texture));
+  }
+
+  /**
+   * Initialize events
+   */
+  initEvents() {
+    window.addEventListener('resize',
+        () => this.calcDimensions());
+
+    document.addEventListener('mousemove',
+        (event) => this.onDocumentMouseMove(event),
+        false);
+
+    document.addEventListener('keydown',
+        (event) => this.onDocumentKeyDown(event),
+        false);
+  }
+
+  /**
+   * Start the game
+   */
+  start() {
+    this.animate();
+  }
+
+  /**
+   * Pause the game
+   */
+  pause() {
+    window.cancelAnimationFrame(this.animationFrame);
+  }
+
+  /**
+   * A single frame of the game
+   */
+  animate() {
+    this.stats.begin();
+    this.renderGame();
+    this.stats.end();
+
+    this.animationFrame = window.requestAnimationFrame(this.animate);
+  }
+
+  /**
+   * Render the game
+   */
+  renderGame() {
+    if (!this.isInitialized()) return;
+
+    //
+    this.camera.lookAt(this.cursor);
+
+    //
+    this.updatePresentCharacters();
+
+    //
+    this.renderer.clear();
+    this.renderer.setScissorTest(true);
+
+    this.renderer.setScissor(0, 0, this.width, this.height);
+    this.renderer.render(this.scene, this.camera);
+
+    this.renderer.setScissorTest(false);
+  }
+
+  /**
+   * Check whether all of the objects in the initialize-list are initialized
+   * @return {boolean}
+   */
+  isInitialized() {
+    return !Object.values(this.initializeList).includes(false);
+  }
+
+  /**
+   * Update present characters
+   */
+  updatePresentCharacters() {
+    for (let i = 0; i < this.presentChars.length; ++i) {
+      const char = characters[this.presentChars[i].characterId];
+      const present = characterPresentations[char['presentation_id']];
+      const action = this.presentChars[i].action;
+
+      //
+      let actionTotalTime = 0;
+      for (let j = 0; j < present.actions[action].length; ++j) {
+        actionTotalTime += present.actions[action][j].duration;
+      }
+
+      const animationTime = this.currTime % actionTotalTime;
+      let animationStep = 0;
+      let testAnimationTime = 0;
+      for (let j = 0; j < present.actions[action].length; ++j) {
+        testAnimationTime += present.actions[action][j].duration;
+        if (animationTime < testAnimationTime) {
+          animationStep = j;
+          break;
+        }
+      }
+
+      //
+      const textureId = present.actions[action][animationStep]['texture_id'];
+      // const textureGroup = present.texture_group;
+      const textureRect = present.textures[textureId];
+
+      const texture = this.presentCharMeshes[i].material.map;
+      const geometry = this.presentCharMeshes[i].geometry;
+      const epsilonU = 1.0 / texture.image.width * 0.1;
+      const epsilonV = 1.0 / texture.image.height * 0.1;
+
+      const x01 = textureRect[0] / texture.image.width + epsilonU;
+      const x23 = (textureRect[0] + textureRect[2]) / texture.image.width
+          - epsilonU;
+      const y03 = 1 - textureRect[1] / texture.image.height - epsilonV;
+      const y12 = 1 - (textureRect[1] + textureRect[3]) / texture.image.height
+          + epsilonV;
+
+      const rect = [
+        new THREE.Vector2(x01, y03),
+        new THREE.Vector2(x01, y12),
+        new THREE.Vector2(x23, y12),
+        new THREE.Vector2(x23, y03),
+      ];
+
+      geometry.faceVertexUvs[0][0][0].set(rect[0].x, rect[0].y);
+      geometry.faceVertexUvs[0][0][1].set(rect[1].x, rect[1].y);
+      geometry.faceVertexUvs[0][0][2].set(rect[3].x, rect[3].y);
+      geometry.faceVertexUvs[0][1][0].set(rect[1].x, rect[1].y);
+      geometry.faceVertexUvs[0][1][1].set(rect[2].x, rect[2].y);
+      geometry.faceVertexUvs[0][1][2].set(rect[3].x, rect[3].y);
+      geometry.uvsNeedUpdate = true;
+    }
+  }
+
+  /**
+   * On load system images
+   * @param {*} texture
+   */
+  onLoadSystemImages(texture) {
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+    });
+
+    this.loadCursor(material, systemImages.cursor);
+
+    this.initializeList.onLoadSystemImages = true;
+  }
+
+  /**
+   * On load tiles
+   * @param {*} texture
+   */
+  onLoadTiles(texture) {
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    const material = new THREE.MeshBasicMaterial({map: texture});
+
+    const columns = Math.floor(texture.image.width / this.tileImageWidth);
+    const rows = Math.floor(texture.image.height / this.tileImageHeight);
+    const unitWidth = this.tileImageWidth / texture.image.width;
+    const unitHeight = this.tileImageHeight / texture.image.height;
+    const epsilonU = 1.0 / texture.image.width * 0.1;
+    const epsilonV = 1.0 / texture.image.height * 0.1;
+
+    const tiles = terrains[this.terrainId]['tiles'];
+
+    for (let i = 0; i < this.tileRows; ++i) {
+      for (let j = 0; j < this.tileCols; ++j) {
+        const geometry = new THREE.PlaneGeometry(
+            this.tileWidth, this.tileHeight);
+
+        const tileId = tiles[i * this.tileCols + j];
+        const columnId = Math.floor(tileId % columns);
+        const rowId = Math.floor(tileId / columns);
+
+        const x01 = columnId * unitWidth + epsilonU;
+        const x23 = (columnId + 1) * unitWidth - epsilonU;
+        const y03 = (rows - rowId) * unitHeight - epsilonV;
+        const y12 = (rows - rowId - 1) * unitHeight + epsilonV;
+
+        const rect = [
+          new THREE.Vector2(x01, y03),
+          new THREE.Vector2(x01, y12),
+          new THREE.Vector2(x23, y12),
+          new THREE.Vector2(x23, y03),
+        ];
+
+        geometry.faceVertexUvs[0] = [];
+        geometry.faceVertexUvs[0][0] = [rect[0], rect[1], rect[3]];
+        geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
+
+        //
+        const tile = new THREE.Mesh(geometry, material);
+
+        tile.position.x = (j + 1 / 2) * this.tileWidth;
+        tile.position.y = 0;
+        tile.position.z = (i + 1 / 2) * this.tileHeight;
+
+        tile.rotation.x = - Math.PI / 2;
+
+        this.scene.add(tile);
+      }
+    }
+
+    this.initializeList.onLoadTiles = true;
+  }
+
+  /**
+   * On load characters
+   * @param {*} texture
+   */
+  onLoadCharacters(texture) {
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+    });
+
+    const epsilonU = 1.0 / texture.image.width * 0.1;
+    const epsilonV = 1.0 / texture.image.height * 0.1;
+
+    for (let i = 0; i < this.presentChars.length; ++i) {
+      const char = characters[this.presentChars[i].characterId];
+      const present = characterPresentations[char['presentation_id']];
+      const location = this.presentChars[i].location;
+      const action = this.presentChars[i].action;
+
+      const textureId = present.actions[action][0]['texture_id'];
+      // const textureGroup = present.texture_group;
+      const textureRect = present.textures[textureId];
+
+      //
+      const geometry = new THREE.PlaneGeometry(
+          this.tileWidth * char.size[0] / 100.0,
+          this.tileHeight * char.size[1] / 100.0);
+
+      const x01 = textureRect[0] / material.map.image.width + epsilonU;
+      const x23 = (textureRect[0] + textureRect[2]) / material.map.image.width
+          - epsilonU;
+      const y03 = 1 - textureRect[1] / material.map.image.height - epsilonV;
+      const y12 = 1
+          - (textureRect[1] + textureRect[3]) / material.map.image.height
+          + epsilonV;
+
+      const rect = [
+        new THREE.Vector2(x01, y03),
+        new THREE.Vector2(x01, y12),
+        new THREE.Vector2(x23, y12),
+        new THREE.Vector2(x23, y03),
+      ];
+
+      geometry.faceVertexUvs[0] = [];
+      geometry.faceVertexUvs[0][0] = [rect[0], rect[1], rect[3]];
+      geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
+
+      //
+      const mesh = new THREE.Mesh(geometry, material);
+
+      mesh.position.x = (location.x + 1 / 2) * this.tileWidth;
+      mesh.position.y = this.tileHeight / 2;
+      mesh.position.z = (location.y + 1 / 2) * this.tileHeight;
+
+      mesh.rotation.x = - Math.PI / 4;
+
+      //
+      this.presentCharMeshes[i] = mesh;
+      this.scene.add(mesh);
+    }
+
+    this.initializeList.onLoadCharacters = true;
+  }
+
+  /**
+   * Load cursor
+   * @param {MeshBasicMaterial} material
+   * @param {Array} textureRect
+   */
+  loadCursor(material, textureRect) {
+    const geometry = new THREE.PlaneGeometry(this.tileWidth, this.tileHeight);
+
+    const x01 = textureRect[0] / material.map.image.width;
+    const x23 = (textureRect[0] + textureRect[2]) / material.map.image.width;
+    const y03 = 1 - textureRect[1] / material.map.image.height;
+    const y12 = 1
+        - (textureRect[1] + textureRect[3]) / material.map.image.height;
+
+    const rect = [
+      new THREE.Vector2(x01, y03),
+      new THREE.Vector2(x01, y12),
+      new THREE.Vector2(x23, y12),
+      new THREE.Vector2(x23, y03),
+    ];
+
+    geometry.faceVertexUvs[0] = [];
+    geometry.faceVertexUvs[0][0] = [rect[0], rect[1], rect[3]];
+    geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
+
+    //
+    this.cursor_tile = new THREE.Mesh(geometry, material);
+
+    this.cursor_tile.position.x = this.cursor.x;
+    this.cursor_tile.position.y = 1;
+    this.cursor_tile.position.z = this.cursor.z;
+
+    this.cursor_tile.rotation.x = - Math.PI / 2;
+
+    this.scene.add(this.cursor_tile);
+  }
+
+  /**
+   * Load present characters
+   */
+  loadPresentCharacters() {
+    this.present_chars = [];
+    this.present_chars.push(new PresentCharacter(40, 4, 10));
+    this.present_chars.push(new PresentCharacter(42, 4, 11));
+    this.present_chars.push(new PresentCharacter(18, 4, 12));
+    this.present_chars.push(new PresentCharacter(36, 4, 13));
+    this.present_chars.push(new PresentCharacter(34, 4, 14));
+
+    this.present_chars.push(new PresentCharacter(37, 6, 2));
+    this.present_chars.push(new PresentCharacter(31, 5, 2));
+    this.present_chars.push(new PresentCharacter(31, 7, 2));
+    this.present_chars.push(new PresentCharacter(43, 6, 3));
+    this.present_chars.push(new PresentCharacter(25, 3, 6));
+    this.present_chars.push(new PresentCharacter(25, 9, 6));
+    this.present_chars.push(new PresentCharacter(7, 8, 10));
+    this.present_chars.push(new PresentCharacter(7, 8, 11));
+    this.present_chars.push(new PresentCharacter(7, 8, 12));
+    this.present_chars.push(new PresentCharacter(7, 8, 13));
+    this.present_chars.push(new PresentCharacter(7, 8, 14));
+  }
+
+  /**
+   * Calculate dimensions
+   */
+  calcDimensions() {
+    this.width = this.root.clientWidth;
+    this.height = this.root.clientHeight;
+
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(this.width, this.height);
+  }
+
+  /**
+   * On document mouse move
+   * @param {Object} event
+   */
+  onDocumentMouseMove(event) {
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
+  }
+
+  /**
+   * On document key down
+   * @param {Object} event
+   */
+  onDocumentKeyDown(event) {
+    switch (event.which) {
+      case 38: // cursor up
+        if (this.cursor.z - this.tileHeight >= this.mapZMin) {
+          this.cursor.z -= this.tileHeight;
+          this.camera.position.z -= this.tileHeight;
+          this.cursor_tile.position.z = this.cursor.z;
+        }
+        break;
+      case 40: // cursor down
+        if (this.cursor.z + this.tileHeight < this.mapZMax) {
+          this.cursor.z += this.tileHeight;
+          this.camera.position.z += this.tileHeight;
+          this.cursor_tile.position.z = this.cursor.z;
+        }
+        break;
+      case 37: // cursor left
+        if (this.cursor.x - this.tileWidth >= this.mapXMin) {
+          this.cursor.x -= this.tileWidth;
+          this.camera.position.x -= this.tileWidth;
+          this.cursor_tile.position.x = this.cursor.x;
+        }
+        break;
+      case 39: // cursor right
+        if (this.cursor.x + this.tileWidth < this.mapXMax) {
+          this.cursor.x += this.tileWidth;
+          this.camera.position.x += this.tileWidth;
+          this.cursor_tile.position.x = this.cursor.x;
+        }
+        break;
+      case 33: // page up
+        if (this.camera.position.y + 100 <= 1000) {
+          this.camera.position.y += 100;
+        }
+        break;
+      case 34: // page down
+        if (this.camera.position.y - 100 >= 100) {
+          this.camera.position.y -= 100;
+        }
+        break;
+    }
   }
 
   /**
@@ -287,219 +558,19 @@ export default class Game extends Component {
    */
   render() {
     return (
-        <canvas ref={(canvas) => this.initCanvas(canvas)} />
+        <div className={styles.game}
+             ref={(element) => this.initElements(element)} />
     );
   }
 
   /**
-   * Initialization after DOM created
+   * Start the game after DOM created
    */
   componentDidMount() {
-    this.initWebGL();
+    this.start();
   }
 }
 
 // Functions ///////////////////////////////////////////////////////////////////
 
-
-
-Game_.prototype =
-    {
-
-
-
-
-
-
-
-
-
-
-
-
-      handleTextureLoaded: function(image, texture)
-      {
-        console.log('handleTextureLoaded, image = ' + image);
-
-        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
-        this.gl.generateMipmap(this.gl.TEXTURE_2D);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-
-        this.initialized = true;
-      },
-
-
-      initData: function()
-      {
-        ;
-      },
-
-
-      initEvents: function()
-      {
-        var self = this;
-
-        window.addEventListener('resize', function()
-        {
-          self.calcDimensions();
-        });
-      },
-
-
-      start: function()
-      {
-        this.drawScene();
-      },
-
-
-      pause: function()
-      {
-        window.cancelAnimationFrame(this.animationFrame);
-      },
-
-
-      drawScene: function()
-      {
-        if (!this.initialized)
-        {
-          this.showInitializing();
-          this.requestNextDraw();
-          return;
-        }
-
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
-        this.perspectiveMatrix = makePerspective(45, this.canvas.width / this.canvas.height, 0.1, 100.0);
-
-        this.loadIdentity();
-        this.mvTranslate([0.0, 0.0, -6.0]);
-
-        //
-        this.mvPushMatrix();
-        this.mvRotate(this.cubeRotation, [1, 0, 1]);
-
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesBuffer);
-        this.gl.vertexAttribPointer(this.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
-
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesTextureCoordBuffer);
-        this.gl.vertexAttribPointer(this.textureCoordAttribute, 2, this.gl.FLOAT, false, 0, 0);
-
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVerticesNormalBuffer);
-        this.gl.vertexAttribPointer(this.vertexNormalAttribute, 3, this.gl.FLOAT, false, 0, 0);
-
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.cubeTexture);
-        this.gl.uniform1i(this.gl.getUniformLocation(this.shaderProgram, 'uSampler'), 0);
-
-        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVerticesIndexBuffer);
-        this.setMatrixUniforms();
-        this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0);
-
-        this.mvPopMatrix();
-
-        //
-        var currentTime = (new Date()).getTime();
-        if (this.lastTime)
-        {
-          var delta = currentTime - this.lastTime;
-
-          this.cubeRotation += (30 * delta) / 1000.0;
-        }
-
-        this.lastTime = currentTime;
-
-        this.requestNextDraw();
-      },
-
-
-      showInitializing: function()
-      {
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-      },
-
-
-      requestNextDraw: function()
-      {
-        var self = this;
-        this.animationFrame = window.requestAnimationFrame(function() {self.drawScene();});
-      },
-
-
-      calcDimensions: function()
-      {
-        this.canvas.top = this.canvas.clientTop;
-        this.canvas.left = this.canvas.clientLeft;
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
-
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-
-        console.log('viewport: ' + this.gl.getParameter(this.gl.VIEWPORT));
-      },
-
-
-      loadIdentity: function()
-      {
-        this.mvMatrix = Matrix.I(4);
-      },
-
-
-      multMatrix: function(m)
-      {
-        this.mvMatrix = this.mvMatrix.x(m);
-      },
-
-
-      mvTranslate: function(v)
-      {
-        this.multMatrix(Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4());
-      },
-
-
-      setMatrixUniforms: function()
-      {
-        var pUniform = this.gl.getUniformLocation(this.shaderProgram, 'uPMatrix');
-        this.gl.uniformMatrix4fv(pUniform, false, new Float32Array(this.perspectiveMatrix.flatten()));
-
-        var mvUniform = this.gl.getUniformLocation(this.shaderProgram, 'uMVMatrix');
-        this.gl.uniformMatrix4fv(mvUniform, false, new Float32Array(this.mvMatrix.flatten()));
-
-        var normalMatrix = this.mvMatrix.inverse();
-        normalMatrix = normalMatrix.transpose();
-        var nUniform = this.gl.getUniformLocation(this.shaderProgram, 'uNormalMatrix');
-        this.gl.uniformMatrix4fv(nUniform, false, new Float32Array(normalMatrix.flatten()));
-      },
-
-
-      mvPushMatrix: function(m)
-      {
-        if (m)
-        {
-          this.mvMatrixStack.push(m.dup());
-          this.mvMatrix = m.dup();
-        }
-        else
-          this.mvMatrixStack.push(this.mvMatrix.dup());
-      },
-
-
-      mvPopMatrix: function()
-      {
-        if (!this.mvMatrixStack.length) throw new Error('Can\'t pop from an empty matrix stack.');
-
-        this.mvMatrix = this.mvMatrixStack.pop();
-        return this.mvMatrix;
-      },
-
-
-      mvRotate: function(angle, v)
-      {
-        var inRadians = angle * Math.PI / 180.0;
-
-        var m = Matrix.Rotation(inRadians, $V([v[0], v[1], v[2]])).ensure4x4();
-        this.multMatrix(m);
-      }
-    };
+// Initializations /////////////////////////////////////////////////////////////
