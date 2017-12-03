@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
-import Game from 'src/components/game/game.jsx';
+import Game from 'src/components/game/index.jsx';
 
 import styles from './index.scss';
 

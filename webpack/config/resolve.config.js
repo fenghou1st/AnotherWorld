@@ -4,6 +4,7 @@ module.exports = {
   alias: {
     src: dirs.sourceRoot,
     vendor: dirs.vendor,
+    assets: dirs.assets,
   },
   modules: [dirs.nodeModules, 'node_modules'],
 };

@@ -16,4 +16,6 @@ module.exports = {
   externals: require('./config/externals.config.js'),
 
   devtool: require('./config/devtool.config.js'),
+
+  devServer: require('./config/devServer.config.js'),
 };

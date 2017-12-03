@@ -3,16 +3,16 @@ import React, {Component} from 'react';
 import * as THREE from 'three';
 import Stats from 'vendor/stats.js';
 
-import styles from './game.scss';
-import PresentCharacter from './present_character';
+import characterPresentations from 'assets/data/character_presentations.json';
+import characters from 'assets/data/characters.json';
+import systemImages from 'assets/data/system_images.json';
+import terrains from 'assets/data/terrains.json';
+import texCharacters from 'assets/textures/characters.png';
+import texSystem from 'assets/textures/system.png';
+import texTiles0 from 'assets/textures/tiles0.png';
 
-import characterPresentations from './data/character_presentations.json';
-import characters from './data/characters.json';
-import systemImages from './data/system_images.json';
-import terrains from './data/terrains.json';
-import texCharacters from './textures/characters.png';
-import texSystem from './textures/system.png';
-import texTiles0 from './textures/tiles0.png';
+import styles from './index.scss';
+import PresentCharacter from './logic/gameplay/present_character';
 
 // Definitions /////////////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ import texTiles0 from './textures/tiles0.png';
 /**
  * Main component of the game
  */
-export default class Game extends Component {
+export default class _GameComponent extends Component {
   /**
    * Initialize data and events
    * @param {?Object} props
@@ -246,7 +246,7 @@ export default class Game extends Component {
 
       //
       const textureId = present.actions[action][animationStep]['texture_id'];
-      // const textureGroup = present.texture_group;
+      // const textureGroup = present['texture_group'];
       const textureRect = present.textures[textureId];
 
       const texture = this.presentCharMeshes[i].material.map;
@@ -280,7 +280,7 @@ export default class Game extends Component {
 
   /**
    * On load system images
-   * @param {*} texture
+   * @param {Texture} texture
    */
   onLoadSystemImages(texture) {
     texture.magFilter = THREE.NearestFilter;
@@ -298,7 +298,7 @@ export default class Game extends Component {
 
   /**
    * On load tiles
-   * @param {*} texture
+   * @param {Texture} texture
    */
   onLoadTiles(texture) {
     texture.magFilter = THREE.NearestFilter;
@@ -358,7 +358,7 @@ export default class Game extends Component {
 
   /**
    * On load characters
-   * @param {*} texture
+   * @param {Texture} texture
    */
   onLoadCharacters(texture) {
     texture.magFilter = THREE.NearestFilter;
@@ -379,7 +379,7 @@ export default class Game extends Component {
       const action = this.presentChars[i].action;
 
       const textureId = present.actions[action][0]['texture_id'];
-      // const textureGroup = present.texture_group;
+      // const textureGroup = present['texture_group'];
       const textureRect = present.textures[textureId];
 
       //
@@ -449,39 +449,39 @@ export default class Game extends Component {
     geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
 
     //
-    this.cursor_tile = new THREE.Mesh(geometry, material);
+    this.cursorTile = new THREE.Mesh(geometry, material);
 
-    this.cursor_tile.position.x = this.cursor.x;
-    this.cursor_tile.position.y = 1;
-    this.cursor_tile.position.z = this.cursor.z;
+    this.cursorTile.position.x = this.cursor.x;
+    this.cursorTile.position.y = 1;
+    this.cursorTile.position.z = this.cursor.z;
 
-    this.cursor_tile.rotation.x = - Math.PI / 2;
+    this.cursorTile.rotation.x = - Math.PI / 2;
 
-    this.scene.add(this.cursor_tile);
+    this.scene.add(this.cursorTile);
   }
 
   /**
    * Load present characters
    */
   loadPresentCharacters() {
-    this.present_chars = [];
-    this.present_chars.push(new PresentCharacter(40, 4, 10));
-    this.present_chars.push(new PresentCharacter(42, 4, 11));
-    this.present_chars.push(new PresentCharacter(18, 4, 12));
-    this.present_chars.push(new PresentCharacter(36, 4, 13));
-    this.present_chars.push(new PresentCharacter(34, 4, 14));
+    this.presentChars = [];
+    this.presentChars.push(new PresentCharacter(40, 4, 10));
+    this.presentChars.push(new PresentCharacter(42, 4, 11));
+    this.presentChars.push(new PresentCharacter(18, 4, 12));
+    this.presentChars.push(new PresentCharacter(36, 4, 13));
+    this.presentChars.push(new PresentCharacter(34, 4, 14));
 
-    this.present_chars.push(new PresentCharacter(37, 6, 2));
-    this.present_chars.push(new PresentCharacter(31, 5, 2));
-    this.present_chars.push(new PresentCharacter(31, 7, 2));
-    this.present_chars.push(new PresentCharacter(43, 6, 3));
-    this.present_chars.push(new PresentCharacter(25, 3, 6));
-    this.present_chars.push(new PresentCharacter(25, 9, 6));
-    this.present_chars.push(new PresentCharacter(7, 8, 10));
-    this.present_chars.push(new PresentCharacter(7, 8, 11));
-    this.present_chars.push(new PresentCharacter(7, 8, 12));
-    this.present_chars.push(new PresentCharacter(7, 8, 13));
-    this.present_chars.push(new PresentCharacter(7, 8, 14));
+    this.presentChars.push(new PresentCharacter(37, 6, 2));
+    this.presentChars.push(new PresentCharacter(31, 5, 2));
+    this.presentChars.push(new PresentCharacter(31, 7, 2));
+    this.presentChars.push(new PresentCharacter(43, 6, 3));
+    this.presentChars.push(new PresentCharacter(25, 3, 6));
+    this.presentChars.push(new PresentCharacter(25, 9, 6));
+    this.presentChars.push(new PresentCharacter(7, 8, 10));
+    this.presentChars.push(new PresentCharacter(7, 8, 11));
+    this.presentChars.push(new PresentCharacter(7, 8, 12));
+    this.presentChars.push(new PresentCharacter(7, 8, 13));
+    this.presentChars.push(new PresentCharacter(7, 8, 14));
   }
 
   /**
@@ -516,28 +516,28 @@ export default class Game extends Component {
         if (this.cursor.z - this.tileHeight >= this.mapZMin) {
           this.cursor.z -= this.tileHeight;
           this.camera.position.z -= this.tileHeight;
-          this.cursor_tile.position.z = this.cursor.z;
+          this.cursorTile.position.z = this.cursor.z;
         }
         break;
       case 40: // cursor down
         if (this.cursor.z + this.tileHeight < this.mapZMax) {
           this.cursor.z += this.tileHeight;
           this.camera.position.z += this.tileHeight;
-          this.cursor_tile.position.z = this.cursor.z;
+          this.cursorTile.position.z = this.cursor.z;
         }
         break;
       case 37: // cursor left
         if (this.cursor.x - this.tileWidth >= this.mapXMin) {
           this.cursor.x -= this.tileWidth;
           this.camera.position.x -= this.tileWidth;
-          this.cursor_tile.position.x = this.cursor.x;
+          this.cursorTile.position.x = this.cursor.x;
         }
         break;
       case 39: // cursor right
         if (this.cursor.x + this.tileWidth < this.mapXMax) {
           this.cursor.x += this.tileWidth;
           this.camera.position.x += this.tileWidth;
-          this.cursor_tile.position.x = this.cursor.x;
+          this.cursorTile.position.x = this.cursor.x;
         }
         break;
       case 33: // page up

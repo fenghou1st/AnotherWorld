@@ -8,5 +8,6 @@ dirs.nodeModules = path.join(dirs.projectRoot, 'node_modules');
 dirs.sourceRoot = path.join(dirs.projectRoot, 'src');
 dirs.vendor = path.join(dirs.projectRoot, 'vendor');
 dirs.dist = path.join(dirs.projectRoot, 'dist');
+dirs.assets = path.join(dirs.projectRoot, 'assets');
 
 module.exports = dirs;
