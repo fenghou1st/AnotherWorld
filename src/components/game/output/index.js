@@ -4,8 +4,11 @@
 export default class Output {
   /**
    * Construct
+   * @param {Game} parent
    */
-  constructor() {}
+  constructor(parent) {
+    this.parent = parent;
+  }
 
   /**
    * Initialize

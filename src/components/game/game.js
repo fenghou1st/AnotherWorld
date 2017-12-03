@@ -11,10 +11,10 @@ export default class Game {
    * Construct
    */
   constructor() {
-    this.input = new Input();
-    this.assets = new Assets();
-    this.logic = new Logic();
-    this.output = new Output();
+    this.input = new Input(this);
+    this.assets = new Assets(this);
+    this.logic = new Logic(this);
+    this.output = new Output(this);
   }
 
   /**
@@ -26,11 +26,6 @@ export default class Game {
     this.logic.init();
     this.output.init();
   }
-
-  /**
-   * Process input
-   */
-  processInput() {}
 
   /**
    * Process logic

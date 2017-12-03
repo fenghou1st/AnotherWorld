@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import Stats from 'vendor/stats.js';
 
 import styles from './index.scss';
+import Game from './game.js';
 
 // Definitions /////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,8 @@ export default class GameComponent extends Component {
     this.animationFrame = null;
 
     this.initEvents();
+
+    this.game = new Game();
 
     //
     this.initElements = this.initElements.bind(this);
@@ -95,7 +98,8 @@ export default class GameComponent extends Component {
    */
   animate() {
     this.stats.begin();
-    // this.renderGame();
+    this.game.processLogic();
+    this.game.processOutput();
     this.stats.end();
 
     this.animationFrame = window.requestAnimationFrame(this.animate);
