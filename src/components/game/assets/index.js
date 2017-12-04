@@ -1,7 +1,7 @@
 /**
  * Assets manager
  */
-export default class Assets {
+class AssetsManager {
   /**
    * Construct
    * @param {Game} parent
@@ -15,3 +15,5 @@ export default class Assets {
    */
   init() {}
 }
+
+export {AssetsManager};

@@ -1,20 +1,34 @@
-import EventGroup from './event_group.js';
-import EventType from './event_type.js';
-import Event from './event.js';
+import {Event, EventGroup, EventType} from './event';
+import {
+  KeyboardEventProcessor,
+  MouseEventProcessor,
+  GamepadEventProcessor,
+  ContainerEventProcessor,
+  GuiEventProcessor,
+  GameEventProcessor,
+} from './processor';
 
 /**
  * Input manager
  * - 搜集用户的各种输入，并转化为逻辑模块可直接处理的动作
  * - 为 AI 提供逻辑模块可直接处理的动作的输入接口
  */
-class Input {
+class InputManager {
   /**
    * Construct
    * @param {Game} parent
    */
   constructor(parent) {
     this.parent = parent;
+
     this.eventsQueue = [];
+
+    this.keyboardProcessor = new KeyboardEventProcessor(this);
+    this.mouseProcessor = new MouseEventProcessor(this);
+    this.gamepadProcessor = new GamepadEventProcessor(this);
+    this.containerProcessor = new ContainerEventProcessor(this);
+    this.guiProcessor = new GuiEventProcessor(this);
+    this.gameProcessor = new GameEventProcessor(this);
   }
 
   /**
@@ -61,79 +75,27 @@ class Input {
     const group = EventType.properties.get(event.type).group;
     switch (group) {
       case EventGroup.KEYBOARD:
-        this._processKeyboardEvent(event);
+        this.keyboardProcessor.process(event);
         break;
       case EventGroup.MOUSE:
-        this._processMouseEvent(event);
+        this.mouseProcessor.process(event);
         break;
       case EventGroup.GAMEPAD:
-        this._processGamepadEvent(event);
+        this.gamepadProcessor.process(event);
         break;
       case EventGroup.CONTAINER:
-        this._processContainerEvent(event);
+        this.containerProcessor.process(event);
         break;
       case EventGroup.GUI:
-        this._processGuiEvent(event);
+        this.guiProcessor.process(event);
         break;
       case EventGroup.GAME:
-        this._processGameEvent(event);
+        this.gameProcessor.process(event);
         break;
       default:
         throw new Error(`Invalid input event group: ${group}`);
     }
   }
-
-  /**
-   * Process keyboard event
-   * @param {Event} event
-   * @private
-   */
-  _processKeyboardEvent(event) {
-  }
-
-  /**
-   * Process mouse event
-   * @param {Event} event
-   * @private
-   */
-  _processMouseEvent(event) {
-  }
-
-  /**
-   * Process gamepad event
-   * @param {Event} event
-   * @private
-   */
-  _processGamepadEvent(event) {
-  }
-
-  /**
-   * Process container event
-   * @param {Event} event
-   * @private
-   */
-  _processContainerEvent(event) {
-  }
-
-  /**
-   * Process in-game gui event
-   * @param {Event} event
-   * @private
-   */
-  _processGuiEvent(event) {
-  }
-
-  /**
-   * Process game event
-   * @param {Event} event
-   * @private
-   */
-  _processGameEvent(event) {
-  }
 }
 
-export default {
-  Input: Input,
-  InputEventType: EventType,
-  InputEvent: Event,
-};
+export {InputManager, EventType, Event};

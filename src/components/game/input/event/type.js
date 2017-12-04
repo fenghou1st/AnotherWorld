@@ -1,4 +1,4 @@
-import EventGroup from './event_group.js';
+import EventGroup from './group.js';
 
 export default {
   // keyboard: [100, 200)

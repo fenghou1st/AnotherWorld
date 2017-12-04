@@ -3,7 +3,7 @@ import * as THREE from 'three';
 /**
  * Present character
  */
-export default class PresentCharacter {
+class PresentCharacter {
   /**
    * @param {number} characterId
    * @param {number} x
@@ -20,3 +20,5 @@ export default class PresentCharacter {
     this.hp = 100;
   }
 }
+
+export {PresentCharacter};

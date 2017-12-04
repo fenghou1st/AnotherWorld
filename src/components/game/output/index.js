@@ -1,7 +1,7 @@
 /**
  * Output manager
  */
-export default class Output {
+class OutputManager {
   /**
    * Construct
    * @param {Game} parent
@@ -15,3 +15,5 @@ export default class Output {
    */
   init() {}
 }
+
+export {OutputManager};

@@ -1,18 +1,13 @@
-// Requirements ////////////////////////////////////////////////////////////////
 import React, {Component} from 'react';
 import Stats from 'vendor/stats.js';
 
 import styles from './index.scss';
 import Game from './game.js';
 
-// Definitions /////////////////////////////////////////////////////////////////
-
-// Classes /////////////////////////////////////////////////////////////////////
-
 /**
  * Main component of the game
  */
-export default class GameComponent extends Component {
+class GameComponent extends Component {
   /**
    * Initialize data and events
    * @param {?Object} props
@@ -151,6 +146,4 @@ export default class GameComponent extends Component {
   }
 }
 
-// Functions ///////////////////////////////////////////////////////////////////
-
-// Initializations /////////////////////////////////////////////////////////////
+export {GameComponent};

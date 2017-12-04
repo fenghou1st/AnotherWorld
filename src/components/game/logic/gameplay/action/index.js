@@ -1,7 +1,7 @@
 /**
  * Gameplay action
  */
-export default class Action {
+class Action {
   /**
    * @param {number} type
    * @param {?Object} data
@@ -11,3 +11,5 @@ export default class Action {
     this.data = data;
   }
 }
+
+export {Action};

@@ -3,10 +3,10 @@
 /**
  * Gameplay manager
  */
-export default class Gameplay {
+class Gameplay {
   /**
    * Construct
-   * @param {Logic} parent
+   * @param {LogicManager} parent
    */
   constructor(parent) {
     this.parent = parent;
@@ -47,3 +47,5 @@ export default class Gameplay {
     // const data = action.data;
   }
 }
+
+export {Gameplay};

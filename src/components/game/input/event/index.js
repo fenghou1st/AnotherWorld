@@ -1,7 +1,10 @@
+import EventGroup from './group.js';
+import EventType from './type.js';
+
 /**
  * Input event
  */
-export default class Event {
+class Event {
   /**
    * @param {number} type
    * @param {?Object} data
@@ -11,3 +14,5 @@ export default class Event {
     this.data = data;
   }
 }
+
+export {Event, EventGroup, EventType};

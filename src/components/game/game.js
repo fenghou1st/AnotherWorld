@@ -1,20 +1,20 @@
-import Input from './input';
-import Assets from './assets';
-import Logic from './logic';
-import Output from './output';
+import {InputManager} from './input';
+import {AssetsManager} from './assets';
+import {LogicManager} from './logic';
+import {OutputManager} from './output';
 
 /**
  * Main class of the game
  */
-export default class Game {
+class Game {
   /**
    * Construct
    */
   constructor() {
-    this.input = new Input(this);
-    this.assets = new Assets(this);
-    this.logic = new Logic(this);
-    this.output = new Output(this);
+    this.input = new InputManager(this);
+    this.assets = new AssetsManager(this);
+    this.logic = new LogicManager(this);
+    this.output = new OutputManager(this);
   }
 
   /**
@@ -37,3 +37,5 @@ export default class Game {
    */
   processOutput() {}
 }
+
+export {Game};

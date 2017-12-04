@@ -1,9 +1,9 @@
-import Gameplay from './gameplay';
+import {Gameplay} from './gameplay';
 
 /**
  * Logic manager
  */
-export default class Logic {
+class LogicManager {
   /**
    * Construct
    * @param {Game} parent
@@ -18,3 +18,5 @@ export default class Logic {
    */
   init() {}
 }
+
+export {LogicManager};
