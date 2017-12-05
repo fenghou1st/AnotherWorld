@@ -1,7 +1,7 @@
 // import Action from './action';
 
 /**
- * Gameplay manager
+ * Gameplay logic
  */
 class Gameplay {
   /**

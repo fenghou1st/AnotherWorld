@@ -5,6 +5,7 @@ module.exports = {
     src: dirs.sourceRoot,
     vendor: dirs.vendor,
     assets: dirs.assets,
+    game: dirs.game,
   },
   modules: [dirs.nodeModules, 'node_modules'],
 };

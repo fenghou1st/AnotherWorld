@@ -1,0 +1,12 @@
+{
+  "keyboard": {
+    "cursorUp": "ArrowUp",
+    "cursorDown": "ArrowDown",
+    "cursorLeft": "ArrowLeft",
+    "cursorRight": "ArrowRight",
+    "cameraUp": "PageUp",
+    "cameraDown": "PageDown"
+  },
+  "mouse": {},
+  "gamepad": {}
+}

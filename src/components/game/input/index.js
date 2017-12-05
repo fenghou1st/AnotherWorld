@@ -1,11 +1,9 @@
 import {Event, EventGroup, EventType} from './event';
 import {
+  ContainerEventProcessor,
   KeyboardEventProcessor,
   MouseEventProcessor,
   GamepadEventProcessor,
-  ContainerEventProcessor,
-  GuiEventProcessor,
-  GameEventProcessor,
 } from './processor';
 
 /**
@@ -23,12 +21,10 @@ class InputManager {
 
     this.eventsQueue = [];
 
+    this.containerProcessor = new ContainerEventProcessor(this);
     this.keyboardProcessor = new KeyboardEventProcessor(this);
     this.mouseProcessor = new MouseEventProcessor(this);
     this.gamepadProcessor = new GamepadEventProcessor(this);
-    this.containerProcessor = new ContainerEventProcessor(this);
-    this.guiProcessor = new GuiEventProcessor(this);
-    this.gameProcessor = new GameEventProcessor(this);
   }
 
   /**
@@ -74,6 +70,9 @@ class InputManager {
     }
     const group = EventType.properties.get(event.type).group;
     switch (group) {
+      case EventGroup.CONTAINER:
+        this.containerProcessor.process(event);
+        break;
       case EventGroup.KEYBOARD:
         this.keyboardProcessor.process(event);
         break;
@@ -82,15 +81,6 @@ class InputManager {
         break;
       case EventGroup.GAMEPAD:
         this.gamepadProcessor.process(event);
-        break;
-      case EventGroup.CONTAINER:
-        this.containerProcessor.process(event);
-        break;
-      case EventGroup.GUI:
-        this.guiProcessor.process(event);
-        break;
-      case EventGroup.GAME:
-        this.gameProcessor.process(event);
         break;
       default:
         throw new Error(`Invalid input event group: ${group}`);

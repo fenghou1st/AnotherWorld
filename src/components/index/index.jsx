@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
-import Game from 'src/components/game/index.jsx';
+import {GameComponent} from 'src/components/game/index.jsx';
 
 import styles from './index.scss';
 
@@ -30,7 +30,7 @@ class Main extends Component {
   render() {
     return (
         <div className={styles.main}>
-          <Game />
+          <GameComponent />
           <div className={styles.credit}>
             A WebGL game by <a href="mailto:fenghou1st@gmail.com">Fenghou</a>.
           </div>

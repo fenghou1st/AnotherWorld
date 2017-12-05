@@ -5,6 +5,14 @@ import {OutputManager} from './output';
 
 /**
  * Main class of the game
+ *
+ * Game activities:
+ *  - create
+ *  - start
+ *  - resume
+ *  - pause
+ *  - stop
+ *  - destroy
  */
 class Game {
   /**
@@ -18,14 +26,39 @@ class Game {
   }
 
   /**
-   * Initialize
+   * Create
    */
-  init() {
+  create() {
     this.input.init();
     this.assets.init();
     this.logic.init();
     this.output.init();
   }
+
+  /**
+   * Start
+   */
+  start() {}
+
+  /**
+   * Resume
+   */
+  resume() {}
+
+  /**
+   * Pause
+   */
+  pause() {}
+
+  /**
+   * Stop
+   */
+  stop() {}
+
+  /**
+   * Destroy
+   */
+  destroy() {}
 
   /**
    * Process logic

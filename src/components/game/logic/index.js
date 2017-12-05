@@ -1,4 +1,5 @@
 import {Gameplay} from './gameplay';
+import {Gui} from './gui';
 
 /**
  * Logic manager
@@ -11,6 +12,7 @@ class LogicManager {
   constructor(parent) {
     this.parent = parent;
     this.gameplay = new Gameplay(this);
+    this.gui = new Gui(this);
   }
 
   /**

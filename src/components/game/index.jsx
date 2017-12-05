@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Stats from 'vendor/stats.js';
 
 import styles from './index.scss';
-import Game from './game.js';
+import {Game} from './game.js';
 
 /**
  * Main component of the game
