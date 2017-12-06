@@ -1,5 +1,5 @@
-import {EventProcessor} from '../processor.js';
-// import EventType from '../../event/type.js';
+import {EventProcessor} from 'game/input/processor/processor.js';
+// import EventType from 'game/input/event/type.js';
 
 /**
  * Container event processor

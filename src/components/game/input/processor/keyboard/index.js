@@ -1,8 +1,8 @@
 import inputConfig from 'assets/data/config.input.json';
 import * as Direction from 'game/common/direction.js';
 
-import {EventProcessor} from '../processor.js';
-import EventType from '../../event/type.js';
+import {EventProcessor} from 'game/input/processor/processor.js';
+import EventType from 'game/input/event/type.js';
 
 /**
  * Keyboard event processor

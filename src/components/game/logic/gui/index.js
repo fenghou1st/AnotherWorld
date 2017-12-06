@@ -28,6 +28,8 @@ class Gui {
    * @param {number} intensity
    */
   moveCursor(direction, intensity = 1.0) {
+    console.log('Move cursor: dir: ' +
+        `${direction.x}, ${direction.y}, ${direction.z}`);
   }
 
   /**
@@ -36,6 +38,8 @@ class Gui {
    * @param {number} intensity
    */
   moveCamera(direction, intensity = 1.0) {
+    console.log('Move camera: dir: ' +
+        `${direction.x}, ${direction.y}, ${direction.z}`);
   }
 }
 

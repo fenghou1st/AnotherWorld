@@ -1,4 +1,4 @@
-import {InputManager} from './input';
+import {InputManager, EventType, Event} from './input';
 import {AssetsManager} from './assets';
 import {LogicManager} from './logic';
 import {OutputManager} from './output';
@@ -71,4 +71,4 @@ class Game {
   processOutput() {}
 }
 
-export {Game};
+export {Game, EventType, Event};

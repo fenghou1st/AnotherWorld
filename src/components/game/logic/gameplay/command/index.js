@@ -1,7 +1,7 @@
 /**
- * Gameplay action
+ * Gameplay command
  */
-class Action {
+class Command {
   /**
    * @param {number} type
    * @param {?Object} data
@@ -12,4 +12,4 @@ class Action {
   }
 }
 
-export {Action};
+export {Command};

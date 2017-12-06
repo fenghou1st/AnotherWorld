@@ -1,4 +1,4 @@
-import ActionGroup from './group.js';
+import CommandGroup from './group.js';
 
 export default {
   // character: [0, 1000)
@@ -17,7 +17,7 @@ export default {
   properties: new Map([
     [1, {
       name: 'change move type',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'moveType': 'number',
@@ -26,7 +26,7 @@ export default {
     }],
     [2, {
       name: 'change direction',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'direction': 'Direction',
@@ -35,7 +35,7 @@ export default {
     }],
     [3, {
       name: 'move',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'direction': 'Direction',
@@ -44,7 +44,7 @@ export default {
     }],
     [4, {
       name: 'jump',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'direction': 'Direction',
@@ -53,7 +53,7 @@ export default {
     }],
     [5, {
       name: 'inspect',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'targetId': 'number',
@@ -62,7 +62,7 @@ export default {
     }],
     [6, {
       name: 'talk',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'targetId': 'number',
@@ -72,7 +72,7 @@ export default {
     }],
     [7, {
       name: 'attack',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'direction': 'Direction',
@@ -82,7 +82,7 @@ export default {
     }],
     [8, {
       name: 'pick up',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'targetId': 'number',
@@ -91,7 +91,7 @@ export default {
     }],
     [9, {
       name: 'default misc interact',
-      group: ActionGroup.CHARACTER,
+      group: CommandGroup.CHARACTER,
       metaData: {
         'sourceId': 'number',
         'targetId': 'number',

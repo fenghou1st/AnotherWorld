@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Stats from 'vendor/stats.js';
 
 import styles from './index.scss';
-import {Game} from './game.js';
+import * as Game from './game.js';
 
 /**
  * Main component of the game
@@ -18,16 +18,11 @@ class GameComponent extends Component {
     this.root = null;
     this.stats = null;
 
-    this.width = null;
-    this.height = null;
-    this.mouseX = null;
-    this.mouseY = null;
-
     this.animationFrame = null;
 
     this.initEvents();
 
-    this.game = new Game();
+    this.game = new Game.Game();
 
     //
     this.initElements = this.initElements.bind(this);
@@ -45,8 +40,8 @@ class GameComponent extends Component {
     this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
     this.root.appendChild(this.stats.dom);
 
-    this.width = this.root.clientWidth;
-    this.height = this.root.clientHeight;
+    // this.width = this.root.clientWidth;
+    // this.height = this.root.clientHeight;
 
     // //
     // this.renderer = new THREE.WebGLRenderer({antialias: true});
@@ -104,9 +99,9 @@ class GameComponent extends Component {
    * Calculate dimensions
    */
   calcDimensions() {
-    this.width = this.root.clientWidth;
-    this.height = this.root.clientHeight;
-
+    // this.width = this.root.clientWidth;
+    // this.height = this.root.clientHeight;
+    //
     // this.camera.aspect = this.width / this.height;
     // this.camera.updateProjectionMatrix();
     //
@@ -118,15 +113,19 @@ class GameComponent extends Component {
    * @param {Object} event
    */
   onDocumentMouseMove(event) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
+    // this.mouseX = event.clientX;
+    // this.mouseY = event.clientY;
   }
 
   /**
    * On document key down
    * @param {Object} event
    */
-  onDocumentKeyDown(event) {}
+  onDocumentKeyDown(event) {
+    this.game.input.processEvent(
+        new Game.Event(Game.EventType.KEYBOARD_DOWN, {code: event.code})
+    );
+  }
 
   /**
    * @return {*}

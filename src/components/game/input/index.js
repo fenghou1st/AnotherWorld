@@ -8,8 +8,6 @@ import {
 
 /**
  * Input manager
- * - 搜集用户的各种输入，并转化为逻辑模块可直接处理的动作
- * - 为 AI 提供逻辑模块可直接处理的动作的输入接口
  */
 class InputManager {
   /**
@@ -18,8 +16,6 @@ class InputManager {
    */
   constructor(parent) {
     this.parent = parent;
-
-    this.eventsQueue = [];
 
     this.containerProcessor = new ContainerEventProcessor(this);
     this.keyboardProcessor = new KeyboardEventProcessor(this);
@@ -33,38 +29,10 @@ class InputManager {
   init() {}
 
   /**
-   * Add an input event to the events queue
-   * @param {Event} event
-   */
-  addEvent(event) {
-    this.eventsQueue.push(event);
-  }
-
-  /**
-   * Add a gameplay action to the actions queue
-   * @param {Action} action
-   */
-  addAction(action) {
-    this.parent.logic.gameplay.addAction(action);
-  }
-
-  /**
-   * Process queued input events
-   */
-  processEvents() {
-    let event = this.eventsQueue.shift();
-    while (event !== undefined) {
-      this._processEvent(event);
-      event = this.eventsQueue.shift();
-    }
-  }
-
-  /**
    * Process single input event
    * @param {Event} event
-   * @private
    */
-  _processEvent(event) {
+  processEvent(event) {
     if (!EventType.properties.has(event.type)) {
       throw new Error(`Invalid input event type: ${event.type}`);
     }

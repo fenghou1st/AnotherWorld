@@ -1,4 +1,4 @@
-import {EventProcessor} from '../processor.js';
+import {EventProcessor} from 'game/input/processor/processor.js';
 
 /**
  * Gamepad event processor

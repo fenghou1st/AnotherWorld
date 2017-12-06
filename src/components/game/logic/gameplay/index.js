@@ -1,4 +1,4 @@
-// import Action from './action';
+// import Command from './command';
 
 /**
  * Gameplay logic
@@ -10,7 +10,7 @@ class Gameplay {
    */
   constructor(parent) {
     this.parent = parent;
-    this.actionsQueue = [];
+    this.commands = [];
   }
 
   /**
@@ -19,32 +19,32 @@ class Gameplay {
   init() {}
 
   /**
-   * Add a gameplay action to the actions queue
-   * @param {Action} action
+   * Add a gameplay command to the commands queue
+   * @param {Command} command
    */
-  addAction(action) {
-    this.actionsQueue.push(action);
+  addCommand(command) {
+    this.commands.push(command);
   }
 
   /**
-   * Process queued gameplay actions
+   * Process queued gameplay commands
    */
-  processActions() {
-    let action = this.actionsQueue.shift();
-    while (action !== undefined) {
-      this._processAction(action);
-      action = this.actionsQueue.shift();
+  processCommands() {
+    let command = this.commands.shift();
+    while (command !== undefined) {
+      this._processCommand(command);
+      command = this.commands.shift();
     }
   }
 
   /**
-   * Process single gameplay action
-   * @param {Action} action
+   * Process single gameplay command
+   * @param {Command} command
    * @private
    */
-  _processAction(action) {
-    // const type = action.type;
-    // const data = action.data;
+  _processCommand(command) {
+    // const type = command.type;
+    // const data = command.data;
   }
 }
 
