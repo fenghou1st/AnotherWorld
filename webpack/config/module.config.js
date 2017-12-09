@@ -3,7 +3,7 @@ const eslintFormatter = require('eslint-friendly-formatter');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const dirs = require('./directories.config.js');
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION = process.env.NODE_ENV === 'prod';
 
 module.exports = {
   rules: [
@@ -23,7 +23,7 @@ module.exports = {
             // cache: true,
             formatter: eslintFormatter,
             failOnError: true,
-            configFile: path.join(dirs.config, 'eslint/eslint.config.js'),
+            configFile: path.join(dirs.webpackCfg, 'eslint/eslint.config.js'),
           },
         },
       ],
@@ -88,7 +88,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               config: {
-                path: path.join(dirs.config, 'postcss/postcss.config.js'),
+                path: path.join(dirs.webpackCfg, 'postcss/postcss.config.js'),
               },
               sourceMap: !IS_PRODUCTION,
             },
@@ -119,7 +119,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               config: {
-                path: path.join(dirs.config, 'postcss/postcss.config.js'),
+                path: path.join(dirs.webpackCfg, 'postcss/postcss.config.js'),
               },
               sourceMap: !IS_PRODUCTION,
             },
@@ -136,7 +136,7 @@ module.exports = {
     {
       resource: {
         test: /\.(yaml|yml)$/,
-        include: dirs.sourceRoot,
+        exclude: /node_modules/,
       },
       use: [
         {loader: 'json-loader'},
@@ -146,13 +146,14 @@ module.exports = {
     {
       resource: {
         test: /\.(txt|vert|frag)$/,
-        include: dirs.sourceRoot,
+        exclude: /node_modules/,
       },
       use: [{loader: 'raw-loader'}],
     },
     {
       resource: {
         test: /textures\/[^/]+$/,
+        exclude: /node_modules/,
       },
       use: [
         {

@@ -1,3 +1,4 @@
+import {GameModule} from 'src/components/game/module';
 import {Event, EventGroup, EventType} from './event';
 import {
   ContainerEventProcessor,
@@ -9,24 +10,26 @@ import {
 /**
  * Input manager
  */
-class InputManager {
+class InputManager extends GameModule {
   /**
    * Construct
-   * @param {Game} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
+  constructor(game) {
+    super(game);
 
-    this.containerProcessor = new ContainerEventProcessor(this);
-    this.keyboardProcessor = new KeyboardEventProcessor(this);
-    this.mouseProcessor = new MouseEventProcessor(this);
-    this.gamepadProcessor = new GamepadEventProcessor(this);
+    this.containerProcessor = new ContainerEventProcessor(game);
+    this.keyboardProcessor = new KeyboardEventProcessor(game);
+    this.mouseProcessor = new MouseEventProcessor(game);
+    this.gamepadProcessor = new GamepadEventProcessor(game);
+
+    this.registerSubModules([
+      this.containerProcessor,
+      this.keyboardProcessor,
+      this.mouseProcessor,
+      this.gamepadProcessor,
+    ]);
   }
-
-  /**
-   * Initialize
-   */
-  init() {}
 
   /**
    * Process single input event

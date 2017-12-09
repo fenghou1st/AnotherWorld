@@ -1,19 +1,23 @@
+import {GameModule} from 'game/module';
+import {SceneLoader} from './scene';
+import {TerrainLoader} from './terrain';
+
 /**
  * Assets manager
  */
-class AssetsManager {
+class AssetsManager extends GameModule {
   /**
    * Construct
-   * @param {Game} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
-  }
+  constructor(game) {
+    super(game);
 
-  /**
-   * Initialize
-   */
-  init() {}
+    this.scene = new SceneLoader(game);
+    this.terrain = new TerrainLoader(game);
+
+    this.registerSubModules([this.scene, this.terrain]);
+  }
 }
 
 export {AssetsManager};

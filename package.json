@@ -6,6 +6,7 @@
   "author": "fenghou",
   "license": "MIT",
   "dependencies": {
+    "lru-cache": "^4.1.1",
     "three": "^0.88.0"
   },
   "devDependencies": {
@@ -49,12 +50,12 @@
     "Firefox ESR"
   ],
   "scripts": {
-    "dev": "NODE_ENV=development webpack --progress --colors --config webpack/webpack.config.js",
-    "watch": "NODE_ENV=development webpack --progress --colors --watch --config webpack/webpack.config.js",
-    "start": "NODE_ENV=development webpack-dev-server --open --config webpack/webpack.config.js",
-    "build": "NODE_ENV=production webpack --progress --colors --bail --config webpack/webpack.config.js",
-    "profile": "NODE_ENV=production webpack --colors --profile --display-modules --config webpack/webpack.config.js",
-    "analyse": "NODE_ENV=production webpack --json > ./webpack/stats.json && webpack-bundle-analyzer --port 8989 ./webpack/stats.json",
+    "dev": "NODE_ENV=dev webpack --progress --colors --config webpack/webpack.config.js",
+    "watch": "NODE_ENV=dev webpack --progress --colors --watch --config webpack/webpack.config.js",
+    "start": "NODE_ENV=dev webpack-dev-server --open --config webpack/webpack.config.js",
+    "build": "NODE_ENV=prod webpack --progress --colors --bail --config webpack/webpack.config.js",
+    "profile": "NODE_ENV=prod webpack --colors --profile --display-modules --config webpack/webpack.config.js",
+    "analyse": "NODE_ENV=prod webpack --json > ./webpack/stats.json && webpack-bundle-analyzer --port 8989 ./webpack/stats.json",
     "analyze": "npm run analyse"
   }
 }

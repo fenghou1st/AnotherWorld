@@ -1,6 +1,6 @@
 // http://eslint.org/docs/user-guide/configuring
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION = process.env.NODE_ENV === 'prod';
 
 module.exports = {
   root: true,

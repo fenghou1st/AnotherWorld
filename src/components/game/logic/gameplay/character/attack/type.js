@@ -1,5 +1,5 @@
 import SourceType from './source/type.js';
-import WeaponType from 'game/logic/gameplay/weapon/type.js';
+import WeaponType from 'game/logic/gameplay/item/weapon/type.js';
 import RangeType from './range/type.js';
 import DamageType from './damage/type.js';
 

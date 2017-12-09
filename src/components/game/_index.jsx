@@ -12,7 +12,7 @@ import texSystem from 'assets/textures/system.png';
 import texTiles0 from 'assets/textures/tiles0.png';
 
 import styles from './index.scss';
-import PresentCharacter from './logic/gameplay/present_character';
+import PresentCharacter from './logic/gameplay/character/present_character';
 
 // Definitions /////////////////////////////////////////////////////////////////
 

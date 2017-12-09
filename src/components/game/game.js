@@ -1,3 +1,4 @@
+import {GameModule} from './module';
 import {InputManager, EventType, Event} from './input';
 import {AssetsManager} from './assets';
 import {LogicManager} from './logic';
@@ -14,51 +15,69 @@ import {OutputManager} from './output';
  *  - stop
  *  - destroy
  */
-class Game {
+class Game extends GameModule {
   /**
    * Construct
    */
   constructor() {
+    super(null);
+    this.game = this;
+
     this.input = new InputManager(this);
     this.assets = new AssetsManager(this);
     this.logic = new LogicManager(this);
     this.output = new OutputManager(this);
+
+    this.registerSubModules([this.input, this.assets, this.logic, this.output]);
   }
 
   /**
-   * Create
+   * On create game
    */
-  create() {
-    this.input.init();
-    this.assets.init();
-    this.logic.init();
-    this.output.init();
+  onCreate() {
+    if (__DEV__) console.info('On create game...');
+    super.onCreate();
   }
 
   /**
-   * Start
+   * On start game
    */
-  start() {}
+  onStart() {
+    if (__DEV__) console.info('On start game...');
+    super.onStart();
+  }
 
   /**
-   * Resume
+   * On resume game
    */
-  resume() {}
+  onResume() {
+    if (__DEV__) console.info('On resume game...');
+    super.onResume();
+  }
 
   /**
-   * Pause
+   * On pause game
    */
-  pause() {}
+  onPause() {
+    if (__DEV__) console.info('On pause game...');
+    super.onPause();
+  }
 
   /**
-   * Stop
+   * On stop game
    */
-  stop() {}
+  onStop() {
+    if (__DEV__) console.info('On stop game...');
+    super.onStop();
+  }
 
   /**
-   * Destroy
+   * On destroy game
    */
-  destroy() {}
+  onDestroy() {
+    if (__DEV__) console.info('On destroy game...');
+    super.onDestroy();
+  }
 
   /**
    * Process logic

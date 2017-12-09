@@ -1,22 +1,23 @@
-// import Command from './command';
+import {GameModule} from 'src/components/game/module';
+import {World} from './world';
+// import {Command} from './command';
 
 /**
  * Gameplay logic
  */
-class Gameplay {
+class Gameplay extends GameModule {
   /**
    * Construct
-   * @param {LogicManager} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
-    this.commands = [];
-  }
+  constructor(game) {
+    super(game);
 
-  /**
-   * Initialize
-   */
-  init() {}
+    this.world = new World(game);
+    this.commands = [];
+
+    this.registerSubModules([this.world]);
+  }
 
   /**
    * Add a gameplay command to the commands queue

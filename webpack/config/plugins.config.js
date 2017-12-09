@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const dirs = require('./directories.config.js');
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION = process.env.NODE_ENV === 'prod';
 
 const plugins = [
 
@@ -17,7 +17,7 @@ const plugins = [
   new webpack.NoEmitOnErrorsPlugin(),
 
   new webpack.EnvironmentPlugin({
-    NODE_ENV: IS_PRODUCTION ? 'production' : 'development',
+    NODE_ENV: IS_PRODUCTION ? 'prod' : 'dev',
   }),
 
   new ExtractTextPlugin('[name].css'),

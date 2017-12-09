@@ -6,10 +6,10 @@ import {EventProcessor} from 'game/input/processor/processor.js';
 class GamepadEventProcessor extends EventProcessor {
   /**
    * Constructor
-   * @param {InputManager} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    super(parent);
+  constructor(game) {
+    super(game);
   }
 
   /**

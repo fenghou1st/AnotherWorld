@@ -1,0 +1,28 @@
+input:
+  keyboard:
+    mapping:
+      cursorUp: ArrowUp
+      cursorDown: ArrowDown
+      cursorLeft: ArrowLeft
+      cursorRight: ArrowRight
+      cameraUp: PageUp
+      cameraDown: PageDown
+  mouse:
+  gamepad:
+
+
+assets:
+  scene:
+    cache:
+      maxSize: 3
+  terrain:
+    cache:
+      maxSize: 3
+
+
+logic:
+  gameplay:
+    world:
+      defaultScene: testGround
+
+output:

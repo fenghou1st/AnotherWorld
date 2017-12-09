@@ -1,19 +1,21 @@
+import {GameModule} from 'src/components/game/module';
+import {Graphic} from './graphic';
+
 /**
  * Output manager
  */
-class OutputManager {
+class OutputManager extends GameModule {
   /**
    * Construct
-   * @param {Game} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
-  }
+  constructor(game) {
+    super(game);
 
-  /**
-   * Initialize
-   */
-  init() {}
+    this.graphic = new Graphic(game);
+
+    this.registerSubModules([this.graphic]);
+  }
 }
 
 export {OutputManager};

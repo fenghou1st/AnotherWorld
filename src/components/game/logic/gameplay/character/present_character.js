@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 /**
  * Present character
+ * TODO: rename
  */
 class PresentCharacter {
   /**

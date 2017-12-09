@@ -1,8 +1,7 @@
-import inputConfig from 'assets/data/config.input.json';
 import * as Direction from 'game/common/direction.js';
-
 import {EventProcessor} from 'game/input/processor/processor.js';
 import EventType from 'game/input/event/type.js';
+import {loadConfig} from 'src/base/js/config';
 
 /**
  * Keyboard event processor
@@ -10,12 +9,13 @@ import EventType from 'game/input/event/type.js';
 class KeyboardEventProcessor extends EventProcessor {
   /**
    * Constructor
-   * @param {InputManager} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    super(parent);
+  constructor(game) {
+    super(game);
 
-    this.keyMap = inputConfig.keyboard;
+    /** @type {Object} */
+    this.keyMap = loadConfig().input.keyboard.mapping;
   }
 
   /**
@@ -46,22 +46,22 @@ class KeyboardEventProcessor extends EventProcessor {
   _processDown(code) {
     switch (code) {
       case this.keyMap.cursorUp:
-        this.parent.parent.logic.gui.moveCursor(Direction.FRONT);
+        this.game.logic.gui.moveCursor(Direction.FRONT);
         break;
       case this.keyMap.cursorDown:
-        this.parent.parent.logic.gui.moveCursor(Direction.BACK);
+        this.game.logic.gui.moveCursor(Direction.BACK);
         break;
       case this.keyMap.cursorLeft:
-        this.parent.parent.logic.gui.moveCursor(Direction.LEFT);
+        this.game.logic.gui.moveCursor(Direction.LEFT);
         break;
       case this.keyMap.cursorRight:
-        this.parent.parent.logic.gui.moveCursor(Direction.RIGHT);
+        this.game.logic.gui.moveCursor(Direction.RIGHT);
         break;
       case this.keyMap.cameraUp:
-        this.parent.parent.logic.gui.moveCamera(Direction.UP);
+        this.game.logic.gui.moveCamera(Direction.UP);
         break;
       case this.keyMap.cameraDown:
-        this.parent.parent.logic.gui.moveCamera(Direction.DOWN);
+        this.game.logic.gui.moveCamera(Direction.DOWN);
         break;
     }
   }

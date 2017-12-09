@@ -1,5 +1,4 @@
 import {EventProcessor} from 'game/input/processor/processor.js';
-// import EventType from 'game/input/event/type.js';
 
 /**
  * Mouse event processor
@@ -7,10 +6,10 @@ import {EventProcessor} from 'game/input/processor/processor.js';
 class MouseEventProcessor extends EventProcessor {
   /**
    * Constructor
-   * @param {InputManager} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    super(parent);
+  constructor(game) {
+    super(game);
   }
 
   /**

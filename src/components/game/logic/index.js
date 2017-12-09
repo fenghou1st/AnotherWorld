@@ -1,24 +1,23 @@
+import {GameModule} from 'src/components/game/module';
 import {Gameplay} from './gameplay';
 import {Gui} from './gui';
 
 /**
  * Logic manager
  */
-class LogicManager {
+class LogicManager extends GameModule {
   /**
    * Construct
-   * @param {Game} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
-    this.gameplay = new Gameplay(this);
-    this.gui = new Gui(this);
-  }
+  constructor(game) {
+    super(game);
 
-  /**
-   * Initialize
-   */
-  init() {}
+    this.gameplay = new Gameplay(game);
+    this.gui = new Gui(game);
+
+    this.registerSubModules([this.gameplay, this.gui]);
+  }
 }
 
 export {LogicManager};

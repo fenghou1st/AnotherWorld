@@ -1,19 +1,16 @@
+import {GameModule} from 'src/components/game/module';
+
 /**
  * GUI logic
  */
-class Gui {
+class Gui extends GameModule {
   /**
    * Construct
-   * @param {LogicManager} parent
+   * @param {Game} game
    */
-  constructor(parent) {
-    this.parent = parent;
+  constructor(game) {
+    super(game);
   }
-
-  /**
-   * Initialize
-   */
-  init() {}
 
   /**
    * Set visibility
