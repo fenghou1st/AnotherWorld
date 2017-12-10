@@ -15,42 +15,16 @@ class GameComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.root = null;
+    /** @type {Element} */
+    this.domRoot = null;
+    /** @type {Stats} */
     this.stats = null;
-
+    /** @type {Game} */
+    this.game = null;
+    /** @type {number} */
     this.animationFrame = null;
 
-    this.initEvents();
-
-    this.game = new Game.Game();
-
-    //
-    this.initElements = this.initElements.bind(this);
     this.animate = this.animate.bind(this);
-  }
-
-  /**
-   * Initialize DOM elements
-   * @param {Object} root - root element
-   */
-  initElements(root) {
-    this.root = root;
-
-    this.stats = new Stats();
-    this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-    this.root.appendChild(this.stats.dom);
-
-    // this.width = this.root.clientWidth;
-    // this.height = this.root.clientHeight;
-
-    // //
-    // this.renderer = new THREE.WebGLRenderer({antialias: true});
-    // this.renderer.setClearColor(this.scene.fog.color);
-    // this.renderer.setPixelRatio(window.devicePixelRatio);
-    // this.renderer.setSize(this.width, this.height);
-    // this.renderer.autoClear = false;
-    //
-    // this.root.appendChild(this.renderer.domElement);
   }
 
   /**
@@ -99,13 +73,7 @@ class GameComponent extends Component {
    * Calculate dimensions
    */
   calcDimensions() {
-    // this.width = this.root.clientWidth;
-    // this.height = this.root.clientHeight;
-    //
-    // this.camera.aspect = this.width / this.height;
-    // this.camera.updateProjectionMatrix();
-    //
-    // this.renderer.setSize(this.width, this.height);
+    this.game.output.onResize();
   }
 
   /**
@@ -128,19 +96,28 @@ class GameComponent extends Component {
   }
 
   /**
+   * Render the game component
    * @return {*}
    */
   render() {
     return (
         <div className={styles.game}
-             ref={(element) => this.initElements(element)} />
+             ref={(element) => this.domRoot = element} />
     );
   }
 
   /**
-   * Start the game after DOM created
+   * Initialize the components, start the game
    */
   componentDidMount() {
+    this.stats = new Stats();
+    this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+    this.domRoot.appendChild(this.stats.dom);
+
+    this.game = new Game.Game(this.domRoot);
+
+    this.initEvents();
+
     this.start();
   }
 }

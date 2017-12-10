@@ -12,7 +12,9 @@ class World extends GameModule {
   constructor(game) {
     super(game);
 
+    /** @type {Object} */
     this.player = null;
+    /** @type {Promise} */
     this.scene = null;
 
     /** @type {Object} */
@@ -27,6 +29,8 @@ class World extends GameModule {
    */
   onStart() {
     // TODO: load player
+    this.player = null;
+    // TODO: load scene
     this.scene = this.game.assets.scene.loadByName(this.sceneName);
   }
 

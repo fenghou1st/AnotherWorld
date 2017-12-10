@@ -16,6 +16,13 @@ class OutputManager extends GameModule {
 
     this.registerSubModules([this.graphic]);
   }
+
+  /**
+   * On viewport resize
+   */
+  onResize() {
+    this.graphic.onResize();
+  }
 }
 
 export {OutputManager};

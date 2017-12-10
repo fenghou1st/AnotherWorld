@@ -1,0 +1,10 @@
+{
+  "terrainName": "day_test",
+  "decorations": [],
+  "entities": [],
+  "characters": [
+    {"location": [0, 0, 0], "characterId": 1},
+    {"location": [1, 0, 0], "characterId": 2},
+    {"location": [2, 0, 0], "characterId": 3}
+  ]
+}

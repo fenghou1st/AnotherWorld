@@ -18,10 +18,12 @@ import {OutputManager} from './output';
 class Game extends GameModule {
   /**
    * Construct
+   * @param {Element} domRoot
    */
-  constructor() {
+  constructor(domRoot) {
     super(null);
     this.game = this;
+    this.domRoot = domRoot;
 
     this.input = new InputManager(this);
     this.assets = new AssetsManager(this);

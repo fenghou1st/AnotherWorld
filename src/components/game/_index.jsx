@@ -3,13 +3,13 @@ import React, {Component} from 'react';
 import * as THREE from 'three';
 import Stats from 'vendor/stats.js';
 
-import characterPresentations from 'assets/data/character_presentations.json';
-import characters from 'assets/data/characters.json';
-import systemImages from 'assets/data/system_images.json';
-import terrains from 'assets/data/terrains.json';
-import texCharacters from 'assets/textures/characters.png';
-import texSystem from 'assets/textures/system.png';
-import texTiles0 from 'assets/textures/tiles0.png';
+// import characterPresentations from 'assets/data/character_presentations.json';
+// import characters from 'assets/data/characters.json';
+// import systemImages from 'assets/data/system_images.json';
+// import terrains from 'assets/data/terrains.json';
+// import texCharacters from 'assets/textures/characters.png';
+// import texSystem from 'assets/textures/system.png';
+// import texTiles0 from 'assets/textures/tiles0.png';
 
 import styles from './index.scss';
 import PresentCharacter from './logic/gameplay/character/present_character';
@@ -29,77 +29,77 @@ export default class _GameComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.root = null;
-    this.stats = null;
-    this.width = null;
-    this.height = null;
+    // this.root = null;
+    // this.stats = null;
+    // this.width = null;
+    // this.height = null;
+    //
+    // this.camera = null;
+    // this.scene = null;
+    // this.renderer = null;
+    // this.geometry = null;
+    // this.material = null;
+    //
+    // this.cursor = null;
+    // this.cursorTile = null;
 
-    this.camera = null;
-    this.scene = null;
-    this.renderer = null;
-    this.geometry = null;
-    this.material = null;
-
-    this.cursor = null;
-    this.cursorTile = null;
-
-    this.terrainId = 16;
-    this.tileRows = terrains[this.terrainId].rows;
-    this.tileCols = terrains[this.terrainId].cols;
-    this.tileImageWidth = 16;
-    this.tileImageHeight = 16;
-    this.tileWidth = 128;
-    this.tileHeight = 128;
-    this.mapXMin = 0;
-    this.mapXMax = this.tileCols * this.tileWidth;
-    this.mapZMin = 0;
-    this.mapZMax = this.tileRows * this.tileHeight;
+    // this.terrainId = 16;
+    // this.sceneRows = terrains[this.terrainId].rows;
+    // this.sceneCols = terrains[this.terrainId].cols;
+    // this.tileInputWidth = 16;
+    // this.tileInputHeight = 16;
+    // this.tileInGameWidth = 128;
+    // this.tileInGameHeight = 128;
+    // this.sceneXMin = 0;
+    // this.sceneXMax = this.sceneCols * this.tileInGameWidth;
+    // this.sceneZMin = 0;
+    // this.sceneZMax = this.sceneRows * this.tileInGameHeight;
 
     this.presentChars = [];
     this.presentCharMeshes = [];
 
     this.initData();
 
-    this.animationFrame = null;
-    this.initializeList = {
-      onLoadSystemImages: false,
-      onLoadTiles: false,
-      onLoadCharacters: false,
-    };
-    this.mouseX = null;
-    this.mouseY = null;
-    this.currTime = null; // unit: ms
-    this.deltaTime = null; // unit: ms
-    this.initEvents();
-
+    // this.animationFrame = null;
+    // this.initializeList = {
+    //   onLoadSystemImages: false,
+    //   onLoadTiles: false,
+    //   onLoadCharacters: false,
+    // };
+    // this.mouseX = null;
+    // this.mouseY = null;
+    // this.currTime = null; // unit: ms
+    // this.deltaTime = null; // unit: ms
+    // this.initEvents();
     //
-    this.initElements = this.initElements.bind(this);
-    this.animate = this.animate.bind(this);
+    // //
+    // this.initElements = this.initElements.bind(this);
+    // this.animate = this.animate.bind(this);
   }
 
-  /**
-   * Initialize DOM elements
-   * @param {Object} root - root element
-   */
-  initElements(root) {
-    this.root = root;
-
-    this.stats = new Stats();
-    this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-    this.root.appendChild(this.stats.dom);
-
-    this.width = this.root.clientWidth;
-    this.height = this.root.clientHeight;
-
-    //
-    this.renderer = new THREE.WebGLRenderer({antialias: true});
-    this.renderer.setClearColor(this.scene.fog.color);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(this.width, this.height);
-    this.renderer.autoClear = false;
-
-    this.root.appendChild(this.renderer.domElement);
-  }
+  // /**
+  //  * Initialize DOM elements
+  //  * @param {Object} root - root element
+  //  */
+  // initElements(root) {
+  //   this.root = root;
+  //
+  //   this.stats = new Stats();
+  //   this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+  //   this.root.appendChild(this.stats.dom);
+  //
+  //   this.width = this.root.clientWidth;
+  //   this.height = this.root.clientHeight;
+  //
+  //   //
+  //   this.renderer = new THREE.WebGLRenderer({antialias: true});
+  //   this.renderer.setClearColor(this.scene.fog.color);
+  //   this.renderer.setPixelRatio(window.devicePixelRatio);
+  //   this.renderer.setSize(this.width, this.height);
+  //   this.renderer.autoClear = false;
+  //
+  //   this.root.appendChild(this.renderer.domElement);
+  // }
 
   /**
    * Initialize data
@@ -107,18 +107,18 @@ export default class _GameComponent extends Component {
   initData() {
     this.loadPresentCharacters();
 
-    //
-    if (this.presentChars.length > 0) {
-      this.cursor = new THREE.Vector3(
-          (this.presentChars[0].location.x + 0.5) * this.tileWidth,
-          0,
-          (this.presentChars[0].location.y + 0.5) * this.tileHeight);
-    } else {
-      this.cursor = new THREE.Vector3(
-          (Math.floor(this.tileRows / 2) + 0.5) * this.tileWidth,
-          0,
-          (Math.floor(this.tileCols / 2) + 0.5) * this.tileHeight);
-    }
+    // //
+    // if (this.presentChars.length > 0) {
+    //   this.cursor = new THREE.Vector3(
+    //       (this.presentChars[0].location.x + 0.5) * this.tileInGameWidth,
+    //       0,
+    //       (this.presentChars[0].location.y + 0.5) * this.tileInGameHeight);
+    // } else {
+    //   this.cursor = new THREE.Vector3(
+    //       (Math.floor(this.sceneRows / 2) + 0.5) * this.tileInGameWidth,
+    //       0,
+    //       (Math.floor(this.sceneCols / 2) + 0.5) * this.tileInGameHeight);
+    // }
 
     this.camera = new THREE.PerspectiveCamera(
         75, this.width / this.height, 1, 2000);
@@ -147,46 +147,46 @@ export default class _GameComponent extends Component {
         (texture) => this.onLoadCharacters(texture));
   }
 
-  /**
-   * Initialize events
-   */
-  initEvents() {
-    window.addEventListener('resize',
-        () => this.calcDimensions());
-
-    document.addEventListener('mousemove',
-        (event) => this.onDocumentMouseMove(event),
-        false);
-
-    document.addEventListener('keydown',
-        (event) => this.onDocumentKeyDown(event),
-        false);
-  }
-
-  /**
-   * Start the game
-   */
-  start() {
-    this.animate();
-  }
-
-  /**
-   * Pause the game
-   */
-  pause() {
-    window.cancelAnimationFrame(this.animationFrame);
-  }
-
-  /**
-   * A single frame of the game
-   */
-  animate() {
-    this.stats.begin();
-    this.renderGame();
-    this.stats.end();
-
-    this.animationFrame = window.requestAnimationFrame(this.animate);
-  }
+  // /**
+  //  * Initialize events
+  //  */
+  // initEvents() {
+  //   window.addEventListener('resize',
+  //       () => this.calcDimensions());
+  //
+  //   document.addEventListener('mousemove',
+  //       (event) => this.onDocumentMouseMove(event),
+  //       false);
+  //
+  //   document.addEventListener('keydown',
+  //       (event) => this.onDocumentKeyDown(event),
+  //       false);
+  // }
+  //
+  // /**
+  //  * Start the game
+  //  */
+  // start() {
+  //   this.animate();
+  // }
+  //
+  // /**
+  //  * Pause the game
+  //  */
+  // pause() {
+  //   window.cancelAnimationFrame(this.animationFrame);
+  // }
+  //
+  // /**
+  //  * A single frame of the game
+  //  */
+  // animate() {
+  //   this.stats.begin();
+  //   this.renderGame();
+  //   this.stats.end();
+  //
+  //   this.animationFrame = window.requestAnimationFrame(this.animate);
+  // }
 
   /**
    * Render the game
@@ -306,21 +306,21 @@ export default class _GameComponent extends Component {
 
     const material = new THREE.MeshBasicMaterial({map: texture});
 
-    const columns = Math.floor(texture.image.width / this.tileImageWidth);
-    const rows = Math.floor(texture.image.height / this.tileImageHeight);
-    const unitWidth = this.tileImageWidth / texture.image.width;
-    const unitHeight = this.tileImageHeight / texture.image.height;
+    const columns = Math.floor(texture.image.width / this.tileInputWidth);
+    const rows = Math.floor(texture.image.height / this.tileInputHeight);
+    const unitWidth = this.tileInputWidth / texture.image.width;
+    const unitHeight = this.tileInputHeight / texture.image.height;
     const epsilonU = 1.0 / texture.image.width * 0.1;
     const epsilonV = 1.0 / texture.image.height * 0.1;
 
     const tiles = terrains[this.terrainId]['tiles'];
 
-    for (let i = 0; i < this.tileRows; ++i) {
-      for (let j = 0; j < this.tileCols; ++j) {
+    for (let i = 0; i < this.sceneRows; ++i) {
+      for (let j = 0; j < this.sceneCols; ++j) {
         const geometry = new THREE.PlaneGeometry(
-            this.tileWidth, this.tileHeight);
+            this.tileInGameWidth, this.tileInGameHeight);
 
-        const tileId = tiles[i * this.tileCols + j];
+        const tileId = tiles[i * this.sceneCols + j];
         const columnId = Math.floor(tileId % columns);
         const rowId = Math.floor(tileId / columns);
 
@@ -343,9 +343,9 @@ export default class _GameComponent extends Component {
         //
         const tile = new THREE.Mesh(geometry, material);
 
-        tile.position.x = (j + 1 / 2) * this.tileWidth;
+        tile.position.x = (j + 1 / 2) * this.tileInGameWidth;
         tile.position.y = 0;
-        tile.position.z = (i + 1 / 2) * this.tileHeight;
+        tile.position.z = (i + 1 / 2) * this.tileInGameHeight;
 
         tile.rotation.x = - Math.PI / 2;
 
@@ -384,8 +384,8 @@ export default class _GameComponent extends Component {
 
       //
       const geometry = new THREE.PlaneGeometry(
-          this.tileWidth * char.size[0] / 100.0,
-          this.tileHeight * char.size[1] / 100.0);
+          this.tileInGameWidth * char.size[0] / 100.0,
+          this.tileInGameHeight * char.size[1] / 100.0);
 
       const x01 = textureRect[0] / material.map.image.width + epsilonU;
       const x23 = (textureRect[0] + textureRect[2]) / material.map.image.width
@@ -409,9 +409,9 @@ export default class _GameComponent extends Component {
       //
       const mesh = new THREE.Mesh(geometry, material);
 
-      mesh.position.x = (location.x + 1 / 2) * this.tileWidth;
-      mesh.position.y = this.tileHeight / 2;
-      mesh.position.z = (location.y + 1 / 2) * this.tileHeight;
+      mesh.position.x = (location.x + 1 / 2) * this.tileInGameWidth;
+      mesh.position.y = this.tileInGameHeight / 2;
+      mesh.position.z = (location.y + 1 / 2) * this.tileInGameHeight;
 
       mesh.rotation.x = - Math.PI / 4;
 
@@ -429,7 +429,7 @@ export default class _GameComponent extends Component {
    * @param {Array} textureRect
    */
   loadCursor(material, textureRect) {
-    const geometry = new THREE.PlaneGeometry(this.tileWidth, this.tileHeight);
+    const geometry = new THREE.PlaneGeometry(this.tileInGameWidth, this.tileInGameHeight);
 
     const x01 = textureRect[0] / material.map.image.width;
     const x23 = (textureRect[0] + textureRect[2]) / material.map.image.width;
@@ -483,28 +483,28 @@ export default class _GameComponent extends Component {
     this.presentChars.push(new PresentCharacter(7, 8, 13));
     this.presentChars.push(new PresentCharacter(7, 8, 14));
   }
-
-  /**
-   * Calculate dimensions
-   */
-  calcDimensions() {
-    this.width = this.root.clientWidth;
-    this.height = this.root.clientHeight;
-
-    this.camera.aspect = this.width / this.height;
-    this.camera.updateProjectionMatrix();
-
-    this.renderer.setSize(this.width, this.height);
-  }
-
-  /**
-   * On document mouse move
-   * @param {Object} event
-   */
-  onDocumentMouseMove(event) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
-  }
+  //
+  // /**
+  //  * Calculate dimensions
+  //  */
+  // calcDimensions() {
+  //   this.width = this.root.clientWidth;
+  //   this.height = this.root.clientHeight;
+  //
+  //   this.camera.aspect = this.width / this.height;
+  //   this.camera.updateProjectionMatrix();
+  //
+  //   this.renderer.setSize(this.width, this.height);
+  // }
+  //
+  // /**
+  //  * On document mouse move
+  //  * @param {Object} event
+  //  */
+  // onDocumentMouseMove(event) {
+  //   this.mouseX = event.clientX;
+  //   this.mouseY = event.clientY;
+  // }
 
   /**
    * On document key down
@@ -513,30 +513,30 @@ export default class _GameComponent extends Component {
   onDocumentKeyDown(event) {
     switch (event.which) {
       case 38: // cursor up
-        if (this.cursor.z - this.tileHeight >= this.mapZMin) {
-          this.cursor.z -= this.tileHeight;
-          this.camera.position.z -= this.tileHeight;
+        if (this.cursor.z - this.tileInGameHeight >= this.sceneZMin) {
+          this.cursor.z -= this.tileInGameHeight;
+          this.camera.position.z -= this.tileInGameHeight;
           this.cursorTile.position.z = this.cursor.z;
         }
         break;
       case 40: // cursor down
-        if (this.cursor.z + this.tileHeight < this.mapZMax) {
-          this.cursor.z += this.tileHeight;
-          this.camera.position.z += this.tileHeight;
+        if (this.cursor.z + this.tileInGameHeight < this.sceneZMax) {
+          this.cursor.z += this.tileInGameHeight;
+          this.camera.position.z += this.tileInGameHeight;
           this.cursorTile.position.z = this.cursor.z;
         }
         break;
       case 37: // cursor left
-        if (this.cursor.x - this.tileWidth >= this.mapXMin) {
-          this.cursor.x -= this.tileWidth;
-          this.camera.position.x -= this.tileWidth;
+        if (this.cursor.x - this.tileInGameWidth >= this.sceneXMin) {
+          this.cursor.x -= this.tileInGameWidth;
+          this.camera.position.x -= this.tileInGameWidth;
           this.cursorTile.position.x = this.cursor.x;
         }
         break;
       case 39: // cursor right
-        if (this.cursor.x + this.tileWidth < this.mapXMax) {
-          this.cursor.x += this.tileWidth;
-          this.camera.position.x += this.tileWidth;
+        if (this.cursor.x + this.tileInGameWidth < this.sceneXMax) {
+          this.cursor.x += this.tileInGameWidth;
+          this.camera.position.x += this.tileInGameWidth;
           this.cursorTile.position.x = this.cursor.x;
         }
         break;
@@ -552,23 +552,23 @@ export default class _GameComponent extends Component {
         break;
     }
   }
-
-  /**
-   * @return {*}
-   */
-  render() {
-    return (
-        <div className={styles.game}
-             ref={(element) => this.initElements(element)} />
-    );
-  }
-
-  /**
-   * Start the game after DOM created
-   */
-  componentDidMount() {
-    this.start();
-  }
+  //
+  // /**
+  //  * @return {*}
+  //  */
+  // render() {
+  //   return (
+  //       <div className={styles.game}
+  //            ref={(element) => this.initElements(element)} />
+  //   );
+  // }
+  //
+  // /**
+  //  * Start the game after DOM created
+  //  */
+  // componentDidMount() {
+  //   this.start();
+  // }
 }
 
 // Functions ///////////////////////////////////////////////////////////////////

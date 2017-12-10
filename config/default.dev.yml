@@ -21,8 +21,19 @@ assets:
 
 
 logic:
+  ai:
   gameplay:
     world:
       defaultScene: testGround
+  gui:
+    tile:
+      inputWidth: 16
+      inputHeight: 16
+      inGameWidth: 128
+      inGameHeight: 128
+  online:
+
 
 output:
+  audio:
+  graphic:

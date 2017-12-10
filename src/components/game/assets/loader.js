@@ -15,7 +15,7 @@ export class AssetsLoader extends GameModule {
   /**
    * Load the specified asset by its id
    * @param {number} id
-   * @return {*}
+   * @return {Promise}
    */
   loadById(id) {
     if (id === null) return null;
@@ -25,7 +25,7 @@ export class AssetsLoader extends GameModule {
   /**
    * Load the specified asset by its name
    * @param {string} name
-   * @return {*}
+   * @return {Promise}
    */
   loadByName(name) {
     if (name === null) return null;

@@ -5,13 +5,22 @@ class Scene {
   /**
    * Construct
    * @param {string} name
+   * @param {Object} data
    */
-  constructor(name) {
+  constructor(name, data) {
     this.name = name;
+
+    /** @type {string} */
+    this.terrainName = data.terrainName;
+    /** @type {Array} */
+    this.decorations = data.decorations;
+    /** @type {Array} */
+    this.entities = data.entities;
+    /** @type {Array} */
+    this.characters = data.characters;
+
+    /** @type {Terrain} */
     this.terrain = null;
-    this.decorations = null;
-    this.entities = null;
-    this.characters = null;
   }
 }
 
