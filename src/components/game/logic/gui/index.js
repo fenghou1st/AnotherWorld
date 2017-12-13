@@ -1,6 +1,6 @@
-import {GameModule} from 'src/components/game/module';
+import {GameModule} from 'game/common/module';
 import {loadConfig} from 'src/base/js/config';
-import {Position} from 'game/common/position.js';
+import {Position} from 'game/common/math/position.js';
 
 /**
  * GUI logic

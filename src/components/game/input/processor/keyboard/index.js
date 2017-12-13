@@ -1,4 +1,4 @@
-import * as Direction from 'game/common/direction.js';
+import * as Direction from 'game/common/math/direction.js';
 import {EventProcessor} from 'game/input/processor/processor.js';
 import EventType from 'game/input/event/type.js';
 import {loadConfig} from 'src/base/js/config';

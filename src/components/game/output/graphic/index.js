@@ -1,4 +1,4 @@
-import {GameModule} from 'src/components/game/module';
+import {GameModule} from 'game/common/module';
 import * as THREE from 'three';
 
 /**

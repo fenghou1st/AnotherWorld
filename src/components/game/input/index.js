@@ -1,4 +1,4 @@
-import {GameModule} from 'src/components/game/module';
+import {GameModule} from 'game/common/module';
 import {Event, EventGroup, EventType} from './event';
 import {
   ContainerEventProcessor,

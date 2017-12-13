@@ -1,4 +1,4 @@
-import {GameModule} from 'game/module';
+import {GameModule} from 'game/common/module';
 import {SceneLoader} from './scene';
 import {TerrainLoader} from './terrain';
 

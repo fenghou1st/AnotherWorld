@@ -1,4 +1,4 @@
-import {GameModule} from './module';
+import {GameModule} from './common/module';
 import {InputManager, EventType, Event} from './input';
 import {AssetsManager} from './assets';
 import {LogicManager} from './logic';
@@ -36,49 +36,61 @@ class Game extends GameModule {
   /**
    * On create game
    */
-  onCreate() {
-    if (__DEV__) console.info('On create game...');
-    super.onCreate();
+  async onCreate() {
+    if (__DEV__) console.info('Game creating...');
+    await this.onCreateBegin();
+    this.onCreateEnd();
+    if (__DEV__) console.info('Game created');
   }
 
   /**
    * On start game
    */
-  onStart() {
-    if (__DEV__) console.info('On start game...');
-    super.onStart();
+  async onStart() {
+    if (__DEV__) console.info('Game starting...');
+    await this.onStartBegin();
+    this.onStartEnd();
+    if (__DEV__) console.info('Game started');
   }
 
   /**
    * On resume game
    */
-  onResume() {
-    if (__DEV__) console.info('On resume game...');
-    super.onResume();
+  async onResume() {
+    if (__DEV__) console.info('Game resuming...');
+    await this.onResumeBegin();
+    this.onResumeEnd();
+    if (__DEV__) console.info('Game resumed');
   }
 
   /**
    * On pause game
    */
-  onPause() {
-    if (__DEV__) console.info('On pause game...');
-    super.onPause();
+  async onPause() {
+    if (__DEV__) console.info('Game pausing...');
+    await this.onPauseBegin();
+    this.onPauseEnd();
+    if (__DEV__) console.info('Game paused');
   }
 
   /**
    * On stop game
    */
-  onStop() {
-    if (__DEV__) console.info('On stop game...');
-    super.onStop();
+  async onStop() {
+    if (__DEV__) console.info('Game stopping...');
+    await this.onStopBegin();
+    this.onStopEnd();
+    if (__DEV__) console.info('Game stopped');
   }
 
   /**
    * On destroy game
    */
-  onDestroy() {
-    if (__DEV__) console.info('On destroy game...');
-    super.onDestroy();
+  async onDestroy() {
+    if (__DEV__) console.info('Game destroying...');
+    await this.onDestroyBegin();
+    this.onDestroyEnd();
+    if (__DEV__) console.info('Game destroyed');
   }
 
   /**

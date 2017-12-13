@@ -1,5 +1,5 @@
 import {loadConfig} from 'src/base/js/config';
-import {GameModule} from 'src/components/game/module';
+import {GameModule} from 'game/common/module';
 
 /**
  * World logic

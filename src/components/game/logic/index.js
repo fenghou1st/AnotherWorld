@@ -1,4 +1,4 @@
-import {GameModule} from 'src/components/game/module';
+import {GameModule} from 'game/common/module';
 import {Gameplay} from './gameplay';
 import {Gui} from './gui';
 
