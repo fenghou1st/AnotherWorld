@@ -41,6 +41,9 @@ module.exports = {
             presets: [
               ['env', {modules: false}],
             ],
+            plugins: [
+                require('babel-plugin-syntax-dynamic-import'),
+            ],
             cacheDirectory: true,
           },
         },
@@ -59,6 +62,9 @@ module.exports = {
             presets: [
               ['env', {modules: false}],
               ['react'],
+            ],
+            plugins: [
+              require('babel-plugin-syntax-dynamic-import'),
             ],
             cacheDirectory: true,
           },
