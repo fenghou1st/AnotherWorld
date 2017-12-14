@@ -34,62 +34,56 @@ class Game extends GameModule {
   }
 
   /**
-   * On create game
+   * Create the game
    */
-  async onCreate() {
+  async create() {
     if (__DEV__) console.info('Game creating...');
-    await this.onCreateBegin();
-    this.onCreateEnd();
+    this.synced = await this.onCreate();
     if (__DEV__) console.info('Game created');
   }
 
   /**
-   * On start game
+   * Start the game
    */
-  async onStart() {
+  async start() {
     if (__DEV__) console.info('Game starting...');
-    await this.onStartBegin();
-    this.onStartEnd();
+    this.synced = await this.onStart();
     if (__DEV__) console.info('Game started');
   }
 
   /**
-   * On resume game
+   * Resume the game
    */
-  async onResume() {
+  async resume() {
     if (__DEV__) console.info('Game resuming...');
-    await this.onResumeBegin();
-    this.onResumeEnd();
+    this.synced = await this.onResume();
     if (__DEV__) console.info('Game resumed');
   }
 
   /**
-   * On pause game
+   * Pause the game
    */
-  async onPause() {
+  async pause() {
     if (__DEV__) console.info('Game pausing...');
-    await this.onPauseBegin();
-    this.onPauseEnd();
+    this.synced = await this.onPause();
     if (__DEV__) console.info('Game paused');
   }
 
   /**
-   * On stop game
+   * Stop the game
    */
-  async onStop() {
+  async stop() {
     if (__DEV__) console.info('Game stopping...');
-    await this.onStopBegin();
-    this.onStopEnd();
+    this.synced = await this.onStop();
     if (__DEV__) console.info('Game stopped');
   }
 
   /**
-   * On destroy game
+   * Destroy the game
    */
-  async onDestroy() {
+  async destroy() {
     if (__DEV__) console.info('Game destroying...');
-    await this.onDestroyBegin();
-    this.onDestroyEnd();
+    this.synced = await this.onDestroy();
     if (__DEV__) console.info('Game destroyed');
   }
 

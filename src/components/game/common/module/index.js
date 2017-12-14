@@ -10,6 +10,7 @@ export class GameModule {
    */
   constructor(game) {
     this.game = game;
+    this.synced = null;
     this.status = Status.INITIALIZED;
     this.subModules = [];
   }

@@ -46,15 +46,32 @@ class GameComponent extends Component {
   /**
    * Start the game
    */
-  start() {
+  async start() {
+    await this.game.start();
+    await this.resume();
+  }
+
+  /**
+   * Resume the game
+   */
+  async resume() {
+    await this.game.resume();
     this.animate();
   }
 
   /**
    * Pause the game
    */
-  pause() {
+  async pause() {
     window.cancelAnimationFrame(this.animationFrame);
+    await this.game.pause();
+  }
+
+  /**
+   * Stop the game
+   */
+  async stop() {
+    await this.game.stop();
   }
 
   /**
@@ -109,16 +126,18 @@ class GameComponent extends Component {
   /**
    * Initialize the components, start the game
    */
-  componentDidMount() {
+  async componentDidMount() {
     this.stats = new Stats();
     this.stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
     this.domRoot.appendChild(this.stats.dom);
 
     this.game = new Game.Game(this.domRoot);
 
+    await this.game.create();
+
     this.initEvents();
 
-    this.start();
+    await this.start();
   }
 }
 
