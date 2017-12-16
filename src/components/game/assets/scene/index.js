@@ -36,22 +36,16 @@ class SceneLoader extends AssetsLoader {
    *
    * Note: Here we save the Promise object to the cache.
    * If you first await the request, and then save the asset to the cache,
-   * it will probably cause multiple requests of the same data
+   * it will probably cause multiple requests to the same data
    *
    * @param {string} name
-   * @return {Promise}
+   * @return {Promise.<Scene>}
    */
   loadByName(name) {
     let scene = this.cache.get(name);
 
     if (scene === undefined) {
-      scene = async () => {
-        const data = await SceneLoader._loadSceneData(name);
-        const newScene = new Scene(name, data);
-        newScene.terrain =
-            await this.game.assets.terrain.loadByName(newScene.terrainName);
-        return newScene;
-      };
+      scene = this._loadScene(name);
       this.cache.set(name, scene);
     }
 
@@ -66,13 +60,17 @@ class SceneLoader extends AssetsLoader {
   }
 
   /**
-   * Load scene data
+   * Load scene data and create scene
    * @param {string} name
-   * @return {Promise}
+   * @return {Promise.<Scene>}
    * @private
    */
-  static _loadSceneData(name) {
-    return import(`assets/data/scene/${name}.json`);
+  async _loadScene(name) {
+    const data = await import(`assets/data/scene/${name}.json`);
+    const scene = new Scene(name, data);
+    const terrainLoader = this.game.assets.terrain;
+    scene.terrain = await terrainLoader.loadByName(scene.terrainName);
+    return scene;
   }
 }
 

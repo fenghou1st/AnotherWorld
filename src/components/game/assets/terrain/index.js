@@ -34,20 +34,18 @@ class TerrainLoader extends AssetsLoader {
   /**
    * Load the specified asset by its name
    *
-   * Note: If you first await the request, and then save the asset to the cache,
-   * it will probably cause multiple requests of the same data
+   * Note: Here we save the Promise object to the cache.
+   * If you first await the request, and then save the asset to the cache,
+   * it will probably cause multiple requests to the same data
    *
    * @param {string} name
-   * @return {Promise}
+   * @return {Promise.<Terrain>}
    */
   loadByName(name) {
     let terrain = this.cache.get(name);
 
     if (terrain === undefined) {
-      terrain = async () => {
-        const data = await TerrainLoader._loadTerrainData(name);
-        return new Terrain(name, data);
-      };
+      terrain = this._loadTerrain(name);
       this.cache.set(name, terrain);
     }
 
@@ -62,13 +60,14 @@ class TerrainLoader extends AssetsLoader {
   }
 
   /**
-   * Load terrain data
+   * Load terrain data and create terrain
    * @param {string} name
-   * @return {Promise}
+   * @return {Promise.<Terrain>}
    * @private
    */
-  static _loadTerrainData(name) {
-    return import(`assets/data/terrain/${name}.json`);
+  async _loadTerrain(name) {
+    const data = await import(`assets/data/terrain/${name}.json`);
+    return new Terrain(name, data);
   }
 }
 

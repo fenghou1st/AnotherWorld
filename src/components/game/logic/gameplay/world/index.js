@@ -14,7 +14,7 @@ class World extends GameModule {
 
     /** @type {Object} */
     this.player = null;
-    /** @type {Promise} */
+    /** @type {Scene} */
     this.scene = null;
 
     /** @type {Object} */
@@ -27,11 +27,12 @@ class World extends GameModule {
   /**
    * On game start
    */
-  onStart() {
+  async onStart() {
     // TODO: load player
     this.player = null;
     // TODO: load scene
-    this.scene = this.game.assets.scene.loadByName(this.sceneName);
+    const sceneLoader = this.game.assets.scene;
+    this.scene = await sceneLoader.loadByName(this.sceneName);
   }
 
   /**
