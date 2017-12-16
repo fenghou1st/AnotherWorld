@@ -12,6 +12,8 @@ class World extends GameModule {
   constructor(game) {
     super(game);
 
+    /** @type {Array.<Object>} */
+    this.charsData = require('assets/data/character/index.json');
     /** @type {Object} */
     this.player = null;
     /** @type {Scene} */
@@ -32,7 +34,7 @@ class World extends GameModule {
 
     // TODO: load player
     this.player = null;
-    // TODO: load scene
+
     const sceneLoader = this.game.assets.scene;
     this.scene = await sceneLoader.loadByName(this.sceneName);
 
@@ -47,6 +49,7 @@ class World extends GameModule {
 
     // TODO: save player
     this.player = null;
+
     // TODO: save scene
     this.scene = null;
 

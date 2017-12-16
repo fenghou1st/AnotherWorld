@@ -70,8 +70,6 @@ class Gui extends GameModule {
     // const player = this.game.logic.gameplay.world.player;
     const scene = this.game.logic.gameplay.world.scene;
 
-    // TODO: Set player info
-
     // Set scene info
     this.sceneRows = scene.terrain.numRows;
     this.sceneCols = scene.terrain.numCols;
@@ -123,6 +121,7 @@ class Gui extends GameModule {
    * Move cursor
    * @param {Direction} direction
    * @param {number} intensity
+   * TODO: implement
    */
   moveCursor(direction, intensity = 1.0) {
     console.log('Move cursor: dir: ' +
@@ -141,6 +140,7 @@ class Gui extends GameModule {
    * Move camera
    * @param {Direction} direction
    * @param {number} intensity
+   * TODO: implement
    */
   moveCamera(direction, intensity = 1.0) {
     console.log('Move camera: dir: ' +

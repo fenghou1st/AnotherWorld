@@ -18,13 +18,16 @@ assets:
   terrain:
     cache:
       maxSize: 3
+  texture:
+    cache:
+      maxSize: 16
 
 
 logic:
   ai:
   gameplay:
     world:
-      defaultScene: testGround
+      defaultScene: test_a
   gui:
     tile:
       inputWidth: 16
