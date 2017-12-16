@@ -5,7 +5,7 @@ import Stats from 'vendor/stats.js';
 
 // import characterPresentations from 'assets/data/presentations.json';
 // import characters from 'assets/data/index.json';
-// import systemImages from 'assets/data/system_images.json';
+// import systemObjects from 'assets/data/system_objects.json';
 // import terrains from 'assets/data/terrains.json';
 // import texCharacters from 'assets/textures/characters.png';
 // import texSystem from 'assets/textures/system.png';
@@ -41,7 +41,7 @@ export default class _GameComponent extends Component {
   //   this.material = null;
   //
   //   this.cursor = null;
-  //   this.cursorTile = null;
+  //   this.cursorMesh = null;
   //
   //   this.terrainId = 16;
   //   this.sceneRows = terrains[this.terrainId].rows;
@@ -291,7 +291,7 @@ export default class _GameComponent extends Component {
   //     transparent: true,
   //   });
   //
-  //   this.loadCursor(material, systemImages.cursor);
+  //   this.loadCursor(material, systemObjects.cursor);
   //
   //   this.initializeList.onLoadSystemImages = true;
   // }
@@ -449,15 +449,15 @@ export default class _GameComponent extends Component {
   //   geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
   //
   //   //
-  //   this.cursorTile = new THREE.Mesh(geometry, material);
+  //   this.cursorMesh = new THREE.Mesh(geometry, material);
   //
-  //   this.cursorTile.position.x = this.cursor.x;
-  //   this.cursorTile.position.y = 1;
-  //   this.cursorTile.position.z = this.cursor.z;
+  //   this.cursorMesh.position.x = this.cursor.x;
+  //   this.cursorMesh.position.y = 1;
+  //   this.cursorMesh.position.z = this.cursor.z;
   //
-  //   this.cursorTile.rotation.x = - Math.PI / 2;
+  //   this.cursorMesh.rotation.x = - Math.PI / 2;
   //
-  //   this.scene.add(this.cursorTile);
+  //   this.scene.add(this.cursorMesh);
   // }
 
   // /**
@@ -516,28 +516,28 @@ export default class _GameComponent extends Component {
         if (this.cursor.z - this.tileInGameHeight >= this.sceneZMin) {
           this.cursor.z -= this.tileInGameHeight;
           this.camera.position.z -= this.tileInGameHeight;
-          this.cursorTile.position.z = this.cursor.z;
+          this.cursorMesh.position.z = this.cursor.z;
         }
         break;
       case 40: // cursor down
         if (this.cursor.z + this.tileInGameHeight < this.sceneZMax) {
           this.cursor.z += this.tileInGameHeight;
           this.camera.position.z += this.tileInGameHeight;
-          this.cursorTile.position.z = this.cursor.z;
+          this.cursorMesh.position.z = this.cursor.z;
         }
         break;
       case 37: // cursor left
         if (this.cursor.x - this.tileInGameWidth >= this.sceneXMin) {
           this.cursor.x -= this.tileInGameWidth;
           this.camera.position.x -= this.tileInGameWidth;
-          this.cursorTile.position.x = this.cursor.x;
+          this.cursorMesh.position.x = this.cursor.x;
         }
         break;
       case 39: // cursor right
         if (this.cursor.x + this.tileInGameWidth < this.sceneXMax) {
           this.cursor.x += this.tileInGameWidth;
           this.camera.position.x += this.tileInGameWidth;
-          this.cursorTile.position.x = this.cursor.x;
+          this.cursorMesh.position.x = this.cursor.x;
         }
         break;
       case 33: // page up

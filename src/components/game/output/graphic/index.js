@@ -13,26 +13,26 @@ class Graphic extends GameModule {
     super(game);
 
     /** @type {number} */
-    this.width = null; // create <-> destroy
+    this.width = null;
     /** @type {number} */
-    this.height = null; // create <-> destroy
+    this.height = null;
 
     /** @type {PerspectiveCamera} */
-    this.camera = null; // create <-> destroy
+    this.camera = null;
     /** @type {Scene} */
-    this.scene = null; // create <-> destroy, onStop: clear cursor, tile, chars
+    this.scene = null;
     /** @type {WebGLRenderer} */
-    this.renderer = null; // create <-> destroy
+    this.renderer = null;
 
     /** @type {Object} */
-    this.systemImages = require('assets/data/system_images.json');
+    this.systemObjects = require('assets/data/system_objects.json');
     /** @type {Mesh} */
-    this.cursorTile = null; // start <-> stop
+    this.cursorMesh = null;
 
     /** @type {Array.<Object>} */
     this.charPresents = require('assets/data/character/presentations.json');
     /** @type {Map.<number, Mesh>} */
-    this.charMeshes = new Map(); // start <-> stop
+    this.charMeshes = new Map();
   }
 
   /**
@@ -80,8 +80,8 @@ class Graphic extends GameModule {
 
     // load textures
     await this.game.logic.gameplay.world;
-    await this._loadSystemImages(cursorPos);
-    await this._loadTerrainTiles();
+    await this._loadSystemMeshes(cursorPos);
+    await this._loadTerrainMeshes();
     await this._loadCharacterMeshes();
 
     this.onStartEnd();
@@ -96,7 +96,7 @@ class Graphic extends GameModule {
    * @param {Position} cursorPos
    * @private
    */
-  async _loadSystemImages(cursorPos) {
+  async _loadSystemMeshes(cursorPos) {
     const textureLoader = this.game.assets.texture;
     const texture = await textureLoader.loadByName('system');
 
@@ -108,17 +108,25 @@ class Graphic extends GameModule {
       transparent: true,
     });
 
-    this._loadCursor(material, cursorPos);
+    //
+    const group = new THREE.Group();
+    group.name = 'systemMeshes';
+
+    this.cursorMesh = this._createCursorMesh(material, cursorPos);
+    group.add(this.cursorMesh);
+
+    this.scene.add(group);
   }
 
   /**
    * Load cursor
    * @param {MeshBasicMaterial} material
-   * @param {Position} cursorPos
+   * @param {Position} pos
+   * @return {Mesh}
    */
-  _loadCursor(material, cursorPos) {
+  _createCursorMesh(material, pos) {
     /** @type {Array} */
-    const texRect = this.systemImages.cursor;
+    const texRect = this.systemObjects.cursor;
 
     const x01 = texRect[0] / material.map.image.width;
     const x23 = (texRect[0] + texRect[2]) / material.map.image.width;
@@ -141,15 +149,15 @@ class Graphic extends GameModule {
     geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
 
     //
-    this.cursorTile = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material);
 
-    this.cursorTile.position.x = cursorPos.x;
-    this.cursorTile.position.y = 1;
-    this.cursorTile.position.z = cursorPos.z;
+    mesh.position.x = pos.x;
+    mesh.position.y = 1;
+    mesh.position.z = pos.z;
 
-    this.cursorTile.rotation.x = - Math.PI / 2;
+    mesh.rotation.x = - Math.PI / 2;
 
-    this.scene.add(this.cursorTile);
+    return mesh;
   }
 
   /**
@@ -161,10 +169,10 @@ class Graphic extends GameModule {
    *
    * @private
    */
-  async _loadTerrainTiles() {
+  async _loadTerrainMeshes() {
     const textureLoader = this.game.assets.texture;
-    const logicScene = this.game.logic.gameplay.world.scene;
-    const tilesTextureName = logicScene.terrain.tilesTextureName;
+    const world = this.game.logic.gameplay.world;
+    const tilesTextureName = world.scene.terrain.tilesTextureName;
     const texture = await textureLoader.loadByName(tilesTextureName);
 
     texture.magFilter = THREE.NearestFilter;
@@ -172,6 +180,23 @@ class Graphic extends GameModule {
 
     const material = new THREE.MeshBasicMaterial({map: texture});
 
+    //
+    const group = new THREE.Group();
+    group.name = 'terrainMeshes';
+
+    this._createTerrainMeshes(texture, material, group);
+
+    this.scene.add(group);
+  }
+
+  /**
+   * Create terrain tiles, and put them into the group
+   * @param {Texture} texture
+   * @param {MeshBasicMaterial} material
+   * @param {Group} group
+   * @private
+   */
+  _createTerrainMeshes(texture, material, group) {
     const tileInputWidth = this.game.logic.gui.tileInputWidth;
     const tileInputHeight = this.game.logic.gui.tileInputHeight;
 
@@ -182,7 +207,8 @@ class Graphic extends GameModule {
     const epsilonU = 1.0 / texture.image.width * 0.1;
     const epsilonV = 1.0 / texture.image.height * 0.1;
 
-    const tiles = logicScene.terrain.tiles;
+    const world = this.game.logic.gameplay.world;
+    const tiles = world.scene.terrain.tiles;
     const sceneRows = this.game.logic.gui.sceneRows;
     const sceneCols = this.game.logic.gui.sceneCols;
     const tileInGameWidth = this.game.logic.gui.tileInGameWidth;
@@ -214,15 +240,15 @@ class Graphic extends GameModule {
         geometry.faceVertexUvs[0][1] = [rect[1], rect[2], rect[3]];
 
         //
-        const tile = new THREE.Mesh(geometry, material);
+        const mesh = new THREE.Mesh(geometry, material);
 
-        tile.position.x = (j + 1 / 2) * tileInGameWidth;
-        tile.position.y = 0;
-        tile.position.z = (i + 1 / 2) * tileInGameHeight;
+        mesh.position.x = (j + 1 / 2) * tileInGameWidth;
+        mesh.position.y = 0;
+        mesh.position.z = (i + 1 / 2) * tileInGameHeight;
 
-        tile.rotation.x = - Math.PI / 2;
+        mesh.rotation.x = - Math.PI / 2;
 
-        this.scene.add(tile);
+        group.add(mesh);
       }
     }
   }
@@ -247,6 +273,23 @@ class Graphic extends GameModule {
       transparent: true,
     });
 
+    //
+    const group = new THREE.Group();
+    group.name = 'characterMeshes';
+
+    this._createCharacterMeshes(texture, material, group);
+
+    this.scene.add(group);
+  }
+
+  /**
+   * Create terrain tiles, and put them into the group
+   * @param {Texture} texture
+   * @param {MeshBasicMaterial} material
+   * @param {Group} group
+   * @private
+   */
+  _createCharacterMeshes(texture, material, group) {
     const materialWidth = material.map.image.width;
     const materialHeight = material.map.image.height;
     const epsilonU = 1.0 / texture.image.width * 0.1;
@@ -298,8 +341,54 @@ class Graphic extends GameModule {
 
       //
       this.charMeshes.set(char.id, mesh);
-      this.scene.add(mesh);
+      group.add(mesh);
     });
+  }
+
+  /**
+   * On game stop
+   */
+  async onStop() {
+    await this.onStopBegin();
+
+    // remove character meshes from the scene
+    this.scene.children
+    .filer((child) => child.name === 'characterMeshes')
+    .map((child) => this.scene.remove(child));
+
+    this.charMeshes = null;
+
+    // remove terrain meshes from the scene
+    this.scene.children
+    .filer((child) => child.name === 'terrainMeshes')
+    .map((child) => this.scene.remove(child));
+
+    // remove system meshes from the scene
+    this.scene.children
+    .filer((child) => child.name === 'systemMeshes')
+    .map((child) => this.scene.remove(child));
+
+    this.cursorMesh = null;
+
+    this.onStopEnd();
+  }
+
+  /**
+   * On game destroy
+   */
+  async onDestroy() {
+    await this.onDestroyBegin();
+
+    this.game.domRoot.removeChild(this.renderer.domElement);
+
+    this.renderer = null;
+    this.scene = null;
+    this.camera = null;
+
+    this.height = null;
+    this.width = null;
+
+    this.onDestroyEnd();
   }
 
   /**

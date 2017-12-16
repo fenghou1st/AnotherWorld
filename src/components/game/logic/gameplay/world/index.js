@@ -23,7 +23,7 @@ class World extends GameModule {
     this.config = loadConfig().logic.gameplay.world;
 
     /** @type {string} */
-    this.sceneName = this.config.defaultScene;
+    this.sceneName = null;
   }
 
   /**
@@ -34,6 +34,9 @@ class World extends GameModule {
 
     // TODO: load player
     this.player = null;
+
+    // load scene
+    this.sceneName = this.config.defaultScene;
 
     const sceneLoader = this.game.assets.scene;
     this.scene = await sceneLoader.loadByName(this.sceneName);
@@ -52,6 +55,8 @@ class World extends GameModule {
 
     // TODO: save scene
     this.scene = null;
+
+    this.sceneName = null;
 
     this.onStopEnd();
   }

@@ -101,6 +101,27 @@ class Gui extends GameModule {
   }
 
   /**
+   * On game stop
+   */
+  async onStop() {
+    await this.onStopBegin();
+
+    this.sceneRows = null;
+    this.sceneCols = null;
+    this.sceneXMin = null;
+    this.sceneXMax = null;
+    this.sceneZMin = null;
+    this.sceneZMax = null;
+
+    this.cursorType = null;
+    this.cursorPos = null;
+    this.cameraPos = null;
+    this.panelVisible = null;
+
+    this.onStopEnd();
+  }
+
+  /**
    * Set visibility of the operation panel
    * @param {boolean} visible
    */
