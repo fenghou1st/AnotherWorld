@@ -2,6 +2,7 @@ import assert from 'assert';
 
 /**
  * Terrain logic
+ * It will not contain data for output modules (for example, texture bitmaps).
  */
 class Terrain {
   /**

@@ -27,8 +27,10 @@ class SceneLoader extends AssetsLoader {
   /**
    * On game stop
    */
-  onStop() {
+  async onStop() {
+    await this.onStopBegin();
     this.clear();
+    this.onStopEnd();
   }
 
   /**

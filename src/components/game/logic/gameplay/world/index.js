@@ -28,21 +28,29 @@ class World extends GameModule {
    * On game start
    */
   async onStart() {
+    await this.onStartBegin();
+
     // TODO: load player
     this.player = null;
     // TODO: load scene
     const sceneLoader = this.game.assets.scene;
     this.scene = await sceneLoader.loadByName(this.sceneName);
+
+    this.onStartEnd();
   }
 
   /**
    * On game stop
    */
-  onStop() {
+  async onStop() {
+    await this.onStopBegin();
+
     // TODO: save player
     this.player = null;
     // TODO: save scene
     this.scene = null;
+
+    this.onStopEnd();
   }
 }
 

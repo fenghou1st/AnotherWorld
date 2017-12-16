@@ -31,9 +31,11 @@ class Graphic extends GameModule {
   }
 
   /**
-   * On create game
+   * On game create
    */
-  onCreate() {
+  async onCreate() {
+    await this.onCreateBegin();
+
     this.width = this.game.domRoot.clientWidth;
     this.height = this.game.domRoot.clientHeight;
 
@@ -64,13 +66,15 @@ class Graphic extends GameModule {
 
     this.root.appendChild(this.renderer.domElement);
 
-    super.onCreate();
+    this.onCreateEnd();
   }
 
   /**
-   * On start game
+   * On game start
    */
-  onStart() {
+  async onStart() {
+    await this.onStartBegin();
+
     // TODO: load textures
     // const textureLoader = new THREE.TextureLoader();
     // textureLoader.load(texSystem,
@@ -82,35 +86,7 @@ class Graphic extends GameModule {
 
     // TODO: loadCursor
 
-    super.onStart();
-  }
-
-  /**
-   * On resume game
-   */
-  onResume() {
-    super.onResume();
-  }
-
-  /**
-   * On pause game
-   */
-  onPause() {
-    super.onPause();
-  }
-
-  /**
-   * On stop game
-   */
-  onStop() {
-    super.onStop();
-  }
-
-  /**
-   * On destroy game
-   */
-  onDestroy() {
-    super.onDestroy();
+    this.onStartEnd();
   }
 
   /**

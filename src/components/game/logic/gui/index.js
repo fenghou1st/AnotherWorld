@@ -49,61 +49,27 @@ class Gui extends GameModule {
   }
 
   /**
-   * On create game
+   * On game start
    */
-  onCreate() {
-    super.onCreate();
-  }
+  async onStart() {
+    await this.onStartBegin();
 
-  /**
-   * On start game
-   */
-  onStart() {
     this.panelVisible = true;
 
-    Promise.all([
-      this.game.logic.gameplay.world.player,
-      this.game.logic.gameplay.world.scene,
-    ]).then(this._onLoadWorld);
+    await this.game.logic.gameplay.world;
+    this._onWorldStarted();
 
-    super.onStart();
+    this.onStartEnd();
   }
 
   /**
-   * On resume game
-   */
-  onResume() {
-    super.onResume();
-  }
-
-  /**
-   * On pause game
-   */
-  onPause() {
-    super.onPause();
-  }
-
-  /**
-   * On stop game
-   */
-  onStop() {
-    super.onStop();
-  }
-
-  /**
-   * On destroy game
-   */
-  onDestroy() {
-    super.onDestroy();
-  }
-
-  /**
-   * On load scene
-   * @param {Object} player
-   * @param {Scene} scene
+   * On world started
    * @private
    */
-  _onLoadWorld([player, scene]) {
+  _onWorldStarted() {
+    // const player = this.game.logic.gameplay.world.player;
+    const scene = this.game.logic.gameplay.world.scene;
+
     // TODO: Set player info
 
     // Set scene info
