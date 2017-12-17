@@ -6,6 +6,7 @@
   "author": "fenghou",
   "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "lru-cache": "^4.1.1",
     "three": "^0.88.0"
   },

@@ -23,6 +23,13 @@ class OutputManager extends GameModule {
   onResize() {
     this.graphic.onResize();
   }
+
+  /**
+   * Update output (when game resumed)
+   */
+  update() {
+    this.graphic.update();
+  }
 }
 
 export {OutputManager};

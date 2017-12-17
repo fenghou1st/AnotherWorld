@@ -78,9 +78,11 @@ class GameComponent extends Component {
    * A single frame of the game
    */
   animate() {
+    const currTime = Date.now();
+
     this.stats.begin();
-    this.game.processLogic();
-    this.game.processOutput();
+    this.game.updateLogic(currTime);
+    this.game.updateOutput(currTime);
     this.stats.end();
 
     this.animationFrame = window.requestAnimationFrame(this.animate);

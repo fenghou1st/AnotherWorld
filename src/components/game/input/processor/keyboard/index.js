@@ -40,28 +40,32 @@ class KeyboardEventProcessor extends EventProcessor {
 
   /**
    * Process keyboard down event
+   *
+   * If you put in the pre-defined objects directly (instead of clone them),
+   * these pre-defined objects will be modified in the functions.
+   *
    * @param {string} code
    * @private
    */
   _processDown(code) {
     switch (code) {
       case this.keyMap.cursorUp:
-        this.game.logic.gui.moveCursor(Direction.FRONT);
+        this.game.logic.gui.moveCursor(Direction.FRONT.clone());
         break;
       case this.keyMap.cursorDown:
-        this.game.logic.gui.moveCursor(Direction.BACK);
+        this.game.logic.gui.moveCursor(Direction.BACK.clone());
         break;
       case this.keyMap.cursorLeft:
-        this.game.logic.gui.moveCursor(Direction.LEFT);
+        this.game.logic.gui.moveCursor(Direction.LEFT.clone());
         break;
       case this.keyMap.cursorRight:
-        this.game.logic.gui.moveCursor(Direction.RIGHT);
+        this.game.logic.gui.moveCursor(Direction.RIGHT.clone());
         break;
       case this.keyMap.cameraUp:
-        this.game.logic.gui.moveCamera(Direction.UP);
+        this.game.logic.gui.moveCamera(Direction.UP.clone());
         break;
       case this.keyMap.cameraDown:
-        this.game.logic.gui.moveCamera(Direction.DOWN);
+        this.game.logic.gui.moveCamera(Direction.DOWN.clone());
         break;
     }
   }

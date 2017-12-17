@@ -71,15 +71,15 @@ class Graphic extends GameModule {
     await this.onStartBegin();
 
     //
-    await this.game.logic.gui;
+    await this.game.logic.gui.synced;
     const cursorPos = this.game.logic.gui.cursorPos;
     const cameraPos = this.game.logic.gui.cameraPos;
 
-    this.camera.position = cameraPos;
+    this.camera.position.copy(cameraPos);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
     // load textures
-    await this.game.logic.gameplay.world;
+    await this.game.logic.gameplay.world.synced;
     await this._loadSystemMeshes(cursorPos);
     await this._loadTerrainMeshes();
     await this._loadCharacterMeshes();
@@ -150,11 +150,7 @@ class Graphic extends GameModule {
 
     //
     const mesh = new THREE.Mesh(geometry, material);
-
-    mesh.position.x = pos.x;
-    mesh.position.y = 1;
-    mesh.position.z = pos.z;
-
+    mesh.position.set(pos.x, 1, pos.z);
     mesh.rotation.x = - Math.PI / 2;
 
     return mesh;
@@ -242,9 +238,10 @@ class Graphic extends GameModule {
         //
         const mesh = new THREE.Mesh(geometry, material);
 
-        mesh.position.x = (j + 1 / 2) * tileInGameWidth;
-        mesh.position.y = 0;
-        mesh.position.z = (i + 1 / 2) * tileInGameHeight;
+        mesh.position.set(
+            (j + 0.5) * tileInGameWidth,
+            0,
+            (i + 0.5) * tileInGameHeight);
 
         mesh.rotation.x = - Math.PI / 2;
 
@@ -305,7 +302,6 @@ class Graphic extends GameModule {
       const charPresent = this.charPresents[charData['presentation_id']];
 
       const textureId = charPresent.actions[char.action][0]['texture_id'];
-      // const textureGroup = charPresent['texture_group'];
       const texRect = charPresent.textures[textureId];
 
       //
@@ -333,9 +329,10 @@ class Graphic extends GameModule {
       //
       const mesh = new THREE.Mesh(geometry, material);
 
-      mesh.position.x = (char.location.x + 1 / 2) * tileInGameWidth;
-      mesh.position.y = tileInGameHeight / 2;
-      mesh.position.z = (char.location.y + 1 / 2) * tileInGameHeight;
+      mesh.position.set(
+          (char.location.x + 0.5) * tileInGameWidth,
+          tileInGameHeight / 2,
+          (char.location.y + 0.5) * tileInGameHeight);
 
       mesh.rotation.x = - Math.PI / 4;
 
@@ -402,6 +399,107 @@ class Graphic extends GameModule {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(this.width, this.height);
+  }
+
+  /**
+   * Update graphic (when game resumed)
+   */
+  update() {
+    const cursorPos = this.game.logic.gui.cursorPos;
+    const cameraPos = this.game.logic.gui.cameraPos;
+
+    this.cursorMesh.position.copy(cursorPos);
+
+    this.camera.position.copy(cameraPos);
+    this.camera.lookAt(cursorPos);
+
+    //
+    this._updateSceneCharacters();
+
+    //
+    this.renderer.clear();
+    this.renderer.setScissorTest(true);
+
+    this.renderer.setScissor(0, 0, this.width, this.height);
+    this.renderer.render(this.scene, this.camera);
+
+    this.renderer.setScissorTest(false);
+  }
+
+  /**
+   * Update characters in the scene
+   */
+  _updateSceneCharacters() {
+    const charsData = this.game.logic.gameplay.world.charsData;
+    const sceneChars = this.game.logic.gameplay.world.scene.characters;
+
+    sceneChars.forEach((char) => {
+      const charData = charsData[char.id];
+      const charPresent = this.charPresents[charData['presentation_id']];
+
+      const stepId = this._calcAnimationStepId(char, charPresent);
+
+      const textureId = charPresent.actions[char.action][stepId]['texture_id'];
+      const texRect = charPresent.textures[textureId];
+
+      const mesh = this.charMeshes.get(char.id);
+      const texture = mesh.material.map;
+      const geometry = mesh.geometry;
+      const texWidth = texture.image.width;
+      const texHeight = texture.image.height;
+      const epsilonU = 1.0 / texWidth * 0.1;
+      const epsilonV = 1.0 / texHeight * 0.1;
+
+      const x01 = texRect[0] / texWidth + epsilonU;
+      const x23 = (texRect[0] + texRect[2]) / texWidth - epsilonU;
+      const y03 = 1 - texRect[1] / texHeight - epsilonV;
+      const y12 = 1 - (texRect[1] + texRect[3]) / texHeight + epsilonV;
+
+      const rect = [
+        new THREE.Vector2(x01, y03),
+        new THREE.Vector2(x01, y12),
+        new THREE.Vector2(x23, y12),
+        new THREE.Vector2(x23, y03),
+      ];
+
+      geometry.faceVertexUvs[0][0][0].set(rect[0].x, rect[0].y);
+      geometry.faceVertexUvs[0][0][1].set(rect[1].x, rect[1].y);
+      geometry.faceVertexUvs[0][0][2].set(rect[3].x, rect[3].y);
+      geometry.faceVertexUvs[0][1][0].set(rect[1].x, rect[1].y);
+      geometry.faceVertexUvs[0][1][1].set(rect[2].x, rect[2].y);
+      geometry.faceVertexUvs[0][1][2].set(rect[3].x, rect[3].y);
+      geometry.uvsNeedUpdate = true;
+    });
+  }
+
+  /**
+   * Calculate animation step id
+   *
+   * TODO: cache wholeDuration
+   *
+   * @param {Character} char
+   * @param {Object} charPresent
+   * @return {number}
+   * @private
+   */
+  _calcAnimationStepId(char, charPresent) {
+    const animations = charPresent['actions'][char.action];
+    const wholeDuration = animations.reduce(
+        (result, element) => element['duration'] + result,
+        0);
+
+    const currDuration = this.game.currTime % wholeDuration;
+    let stepId = 0;
+    let stepDuration = 0;
+    for (let i = 0; i < animations.length; ++i) {
+      stepDuration += animations[i]['duration'];
+      if (currDuration < stepDuration) {
+        stepId = i;
+        break;
+      }
+    }
+
+    return stepId;
   }
 }
 

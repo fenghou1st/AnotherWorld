@@ -24,6 +24,7 @@ class Game extends GameModule {
     super(null);
     this.game = this;
     this.domRoot = domRoot;
+    this.currTime = null;
 
     this.input = new InputManager(this);
     this.assets = new AssetsManager(this);
@@ -88,14 +89,22 @@ class Game extends GameModule {
   }
 
   /**
-   * Process logic
+   * Update logic (when game resumed)
+   * @param {number} currTime
    */
-  processLogic() {}
+  updateLogic(currTime) {
+    this.currTime = currTime;
+    this.logic.update();
+  }
 
   /**
-   * Process output
+   * Update output (when game resumed)
+   * @param {number} currTime
    */
-  processOutput() {}
+  updateOutput(currTime) {
+    this.currTime = currTime;
+    this.output.update();
+  }
 }
 
 export {Game, EventType, Event};

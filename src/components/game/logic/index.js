@@ -18,6 +18,11 @@ class LogicManager extends GameModule {
 
     this.registerSubModules([this.gameplay, this.gui]);
   }
+
+  /**
+   * Update logic (when game resumed)
+   */
+  update() {}
 }
 
 export {LogicManager};

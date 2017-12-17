@@ -56,7 +56,7 @@ class Gui extends GameModule {
 
     this.panelVisible = true;
 
-    await this.game.logic.gameplay.world;
+    await this.game.logic.gameplay.world.synced;
     this._onWorldStarted();
 
     this.onStartEnd();
@@ -82,12 +82,12 @@ class Gui extends GameModule {
     this.cursorType = 0;
 
     if (scene.characters.length > 0) {
-      /** @type {Array.<number>} */
+      /** @type {Position} */
       const location = scene.characters[0].location;
       this.cursorPos = new Position(
-          (location[0] + 0.5) * this.tileInGameWidth,
+          (location.x + 0.5) * this.tileInGameWidth,
           0,
-          (location[1] + 0.5) * this.tileInGameHeight);
+          (location.z + 0.5) * this.tileInGameHeight);
     } else {
       this.cursorPos = new Position(
           (Math.floor(this.sceneRows / 2) + 0.5) * this.tileInGameWidth,
@@ -142,11 +142,29 @@ class Gui extends GameModule {
    * Move cursor
    * @param {Direction} direction
    * @param {number} intensity
-   * TODO: implement
    */
   moveCursor(direction, intensity = 1.0) {
-    console.log('Move cursor: dir: ' +
-        `${direction.x}, ${direction.y}, ${direction.z}`);
+    const movement = direction.multiplyScalar(this.tileInGameWidth * intensity);
+    this.cursorPos.add(movement);
+
+    if (this.cursorPos.z < this.sceneZMin) {
+      this.cursorPos.z = this.sceneZMin + this.tileInGameHeight / 2;
+    }
+
+    if (this.cursorPos.z > this.sceneZMax) {
+      this.cursorPos.z = this.sceneZMax - this.tileInGameHeight / 2;
+    }
+
+    if (this.cursorPos.x < this.sceneXMin) {
+      this.cursorPos.x = this.sceneXMin + this.tileInGameWidth / 2;
+    }
+
+    if (this.cursorPos.x > this.sceneXMax) {
+      this.cursorPos.x = this.sceneXMax - this.tileInGameWidth / 2;
+    }
+
+    this.cameraPos.x = this.cursorPos.x;
+    this.cameraPos.z = this.cursorPos.z + 250;
   }
 
   /**
@@ -161,11 +179,18 @@ class Gui extends GameModule {
    * Move camera
    * @param {Direction} direction
    * @param {number} intensity
-   * TODO: implement
    */
   moveCamera(direction, intensity = 1.0) {
-    console.log('Move camera: dir: ' +
-        `${direction.x}, ${direction.y}, ${direction.z}`);
+    const movement = direction.multiplyScalar(100 * intensity);
+    this.cameraPos.add(movement);
+
+    if (this.cameraPos.y > 1000) {
+      this.cameraPos.y = 1000;
+    }
+
+    if (this.cameraPos.y < 100) {
+      this.cameraPos.y = 100;
+    }
   }
 }
 
